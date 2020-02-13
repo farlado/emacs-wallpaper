@@ -25,7 +25,7 @@
 * About
 Ricing [[https://github.com/ch11ng/exwm][EXWM]] is pretty cool, but even cooler is being able to manage everything about your rice using Emacs. This package is meant to make that a little bit easier, by managing your wallpapers for you. Compatibility is only guaranteed in X desktop sessions.
 
-This package was written literately, so code is included alongside the documentation when the raw org file is opened.
+This package was written literately, so code is included alongside the documentation.
 #+begin_src emacs-lisp :noweb yes :tangle "wallpaper.el"
   ;;; wallpaper.el --- Setting the desktop wallpaper -*- lexical-binding: t -*-
 
