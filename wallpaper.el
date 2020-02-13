@@ -168,8 +168,6 @@ modification of its value may interfere with its proper behavior.")
 
 
 
-
-
 ;;;###autoload
 (defun wallpaper-set-wallpaper ()
   "Set the wallpaper.

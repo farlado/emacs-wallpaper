@@ -249,8 +249,6 @@ The process for static wallpapers is incredibly straightforward: for each wallpa
         (setq command (concat command (wallpaper--style) wallpaper " ")))
       ;; Return the command
       command))
-
-  
 #+end_src
 
 ** Random wallpaper(s)
