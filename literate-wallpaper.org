@@ -137,7 +137,7 @@ If you are cycling through your wallpapers automatically and want to make wallpa
 #+end_src
 
 ** Setting multiple wallpapers
-This setting is not respected by =wallpaper-static-wallpaper-list= because its behavior is already possible by only having one path in that list. If you are
+This setting is not respected by =wallpaper-static-wallpaper-list= because its behavior is already possible by only having one path in that list. If you are wanting to use the same wallpaper on each monitor, set =wallpaper-single= to a non-nil value.
 #+begin_src emacs-lisp
   (defcustom wallpaper-single nil
     "Whether to use one wallpaper across all monitors.
