@@ -333,7 +333,7 @@ The background color assigned in =wallpaper-background= is returned by ~wallpape
 #+begin_src emacs-lisp
   (defun wallpaper--background ()
     "Return the background color to use as an argument for feh."
-    (concat "--image-bg " wallpaper-background " "))
+    (concat "--image-bg '" wallpaper-background "' "))
 #+end_src
 
 * Cycling wallpapers automatically

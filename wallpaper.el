@@ -120,7 +120,7 @@ modification of its value may interfere with its proper behavior.")
 
 (defun wallpaper--background ()
   "Return the background color to use as an argument for feh."
-  (concat "--image-bg " wallpaper-background " "))
+  (concat "--image-bg '" wallpaper-background "' "))
 
 
 
