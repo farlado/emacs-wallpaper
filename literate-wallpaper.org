@@ -89,15 +89,17 @@ Eventually I'll get this project on MELPA, just you wait and see... Till then, y
 
 An example configuration using ~use-package~ is included below:
 #+begin_src emacs-lisp
-    (use-package wallpaper
-      :load-path "lisp/wallpaper"
-      :hook ((exwm-randr-screen-change . wallpaper-set-wallpaper)
-             (after-init . wallpaper-cycle-mode))
-      :config
-      (setq wallpaper-single t
-            wallpaper-style 'scale
-            wallpaper-cycle-interval 45
-            wallpaper-directory (expand-file-name "~/Pictures/wallpapers")))
+  ;; This is an example `use-package' configuration
+  ;; It is not tangled into wallpaper.el
+  (use-package wallpaper
+    :load-path "lisp/wallpaper"
+    :hook ((exwm-randr-screen-change . wallpaper-set-wallpaper)
+           (after-init . wallpaper-cycle-mode))
+    :config
+    (setq wallpaper-single t
+          wallpaper-style 'scale
+          wallpaper-cycle-interval 45
+          wallpaper-directory (expand-file-name "~/Pictures/wallpapers")))
 #+end_src
 
 ** Caveat lector
