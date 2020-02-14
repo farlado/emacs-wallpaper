@@ -81,17 +81,23 @@ This project is licensed under version 3 of the GNU General Public License.
 #+end_src
 
 ** Installation
-Eventually I'll get this project on MELPA, just you wait and see... Till then, you're on your own to clone this repository and get it added to your =load-path=. However, no amount of hand-holding can ensure you have the dependency ~feh~ installed. An example using ~use-package~ is included below:
+Eventually I'll get this project on MELPA, just you wait and see... Till then, you're on your own to clone this repository and get it added to your =load-path=. However, no amount of hand-holding can ensure you have the dependency ~feh~ installed.
+#+begin_src emacs-lisp :tangle "wallpaper.el"
+  (unless (executable-find "feh")
+    (display-warning 'wallpaper "Could not find feh, is it installed?"))
+#+end_src
+
+An example configuration using ~use-package~ is included below:
 #+begin_src emacs-lisp
-  (use-package wallpaper
-    :load-path "lisp/wallpaper"
-    :hook ((exwm-randr-screen-change . wallpaper-set-wallpaper)
-           (after-init . wallpaper-cycle-mode))
-    :config
-    (setq wallpaper-single t
-          wallpaper-style 'scale
-          wallpaper-cycle-interval 45
-          wallpaper-directory (expand-file-name "~/Pictures/wallpapers")))
+    (use-package wallpaper
+      :load-path "lisp/wallpaper"
+      :hook ((exwm-randr-screen-change . wallpaper-set-wallpaper)
+             (after-init . wallpaper-cycle-mode))
+      :config
+      (setq wallpaper-single t
+            wallpaper-style 'scale
+            wallpaper-cycle-interval 45
+            wallpaper-directory (expand-file-name "~/Pictures/wallpapers")))
 #+end_src
 
 ** Caveat lector

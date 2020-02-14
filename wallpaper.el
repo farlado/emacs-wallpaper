@@ -43,6 +43,9 @@
 
 ;;; Code:
 
+(unless (executable-find "feh")
+  (display-warning 'wallpaper "Could not find feh, is it installed?"))
+
 (defgroup wallpaper nil
   "Setting the wallpaper using Emacs."
   :tag "Wallpaper"
