@@ -63,7 +63,7 @@ This package was written literately, so code is included alongside the documenta
 #+end_src
 
 ** License
-This project is licensed under version 3 of the GNU General Public License.
+This package is licensed under version 3 of the GNU General Public License.
 #+name: license
 #+begin_src emacs-lisp
   ;; This program is free software; you can redistribute it and/or modify
@@ -81,13 +81,7 @@ This project is licensed under version 3 of the GNU General Public License.
 #+end_src
 
 ** Installation
-Eventually I'll get this project on MELPA, just you wait and see... Till then, you're on your own to clone this repository and get it added to your =load-path=. However, no amount of hand-holding can ensure you have the dependency ~feh~ installed.
-#+begin_src emacs-lisp :tangle "wallpaper.el"
-  (unless (executable-find "feh")
-    (display-warning 'wallpaper "Could not find feh, is it installed?"))
-#+end_src
-
-An example configuration using ~use-package~ is included below:
+Eventually I'll get this project on MELPA, just you wait and see... Till then, you're on your own to clone this repository and get it added to your =load-path=. An example configuration using ~use-package~ is included below:
 #+begin_src emacs-lisp
   ;; This is an example `use-package' configuration
   ;; It is not tangled into wallpaper.el
@@ -100,6 +94,12 @@ An example configuration using ~use-package~ is included below:
           wallpaper-style 'scale
           wallpaper-cycle-interval 45
           wallpaper-directory (expand-file-name "~/Pictures/wallpapers")))
+#+end_src
+
+However, no amount of hand-holding can ensure you have the dependency ~feh~ installed.
+#+begin_src emacs-lisp :tangle "wallpaper.el"
+  (unless (executable-find "feh")
+    (display-warning 'wallpaper "Could not find feh, is it installed?"))
 #+end_src
 
 ** Caveat lector
