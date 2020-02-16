@@ -102,9 +102,6 @@ However, no amount of hand-holding can ensure you have the dependency ~feh~ inst
   (unless (executable-find "feh")
     (display-warning 'wallpaper "Could not find feh, is it installed?"))
 
-  (unless (eq window-system 'x)
-    (display-warning 'wallpaper "This package is meant for X desktop sessions."))
-
   
 #+end_src
 

@@ -46,9 +46,6 @@
 (unless (executable-find "feh")
   (display-warning 'wallpaper "Could not find feh, is it installed?"))
 
-(unless (eq window-system 'x)
-  (display-warning 'wallpaper "This package is meant for X desktop sessions."))
-
 
 
 (defgroup wallpaper nil
