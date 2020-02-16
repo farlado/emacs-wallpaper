@@ -268,7 +268,7 @@ The process for static wallpapers is incredibly straightforward: for each wallpa
 ** Random wallpaper(s)
 The overall process has two over-arching steps. First, a list is gathered of all available wallpapers in =wallpaper-directory=. Then, the wallpapers currently in use are removed from that list. During this step, the list of wallpapers currently in use is also cleared. Then, for each monitor that can be detected as active by ~xrandr~, a random wallpaper with the proper style argument is appended to the command string.
 #+name: wallpaper--random-command
-#+begin_src emacs-lisp :noweb yes
+#+begin_src emacs-lisp
   (defun wallpaper--random-command ()
     "Return a feh command for random wallpaper assignment."
     (let* ((command (concat "feh " (wallpaper--background)))
@@ -277,7 +277,7 @@ The overall process has two over-arching steps. First, a list is gathered of all
            (num-monitors (if wallpaper-single 1 (wallpaper--num-monitors))))
       ;; Add as many wallpapers to the command as there are monitors
       ;; Add the wallpapers used to `wallpaper--current'
-      (dolist (monitor (number-sequence 1 num-monitors))
+      (dotimes (monitor num-monitors)
         (let ((wallpaper (nth (random num-wallpapers) wallpapers)))
           (setq command (concat command (wallpaper--style) wallpaper " ")
                 wallpapers (delq wallpaper wallpapers))

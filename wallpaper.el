@@ -163,7 +163,7 @@ return value and clears the list as well."
          (num-monitors (if wallpaper-single 1 (wallpaper--num-monitors))))
     ;; Add as many wallpapers to the command as there are monitors
     ;; Add the wallpapers used to `wallpaper--current'
-    (dolist (monitor (number-sequence 1 num-monitors))
+    (dotimes (monitor num-monitors)
       (let ((wallpaper (nth (random num-wallpapers) wallpapers)))
         (setq command (concat command (wallpaper--style) wallpaper " ")
               wallpapers (delq wallpaper wallpapers))
