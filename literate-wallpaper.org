@@ -100,6 +100,8 @@ However, no amount of hand-holding can ensure you have the dependency ~feh~ inst
 #+begin_src emacs-lisp :tangle "wallpaper.el"
   (unless (executable-find "feh")
     (display-warning 'wallpaper "Could not find feh, is it installed?"))
+
+  
 #+end_src
 
 ** Caveat lector
