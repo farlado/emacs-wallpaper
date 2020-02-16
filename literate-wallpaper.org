@@ -309,11 +309,11 @@ Every file with the extension =png= or =jpg= (case-insensitive) inside of =wallp
 
   This function removes the values in the list `wallpaper--current' from its
   return value and clears the list as well."
-    (let ((all-wallpapers (wallpaper--wallpapers))
+    (let ((wallpapers (wallpaper--wallpapers))
           (current-wallpapers wallpaper--current))
       (setq wallpaper--current nil)
       (dolist (wallpaper current-wallpapers)
-        (setq all-wallpapers (delq wallpaper all-wallpapers)))
+        (setq wallpapers (delq wallpaper wallpapers)))
       wallpapers))
 #+end_src
 

@@ -141,11 +141,11 @@ modification of its value may interfere with its proper behavior.")
 
 This function removes the values in the list `wallpaper--current' from its
 return value and clears the list as well."
-  (let ((all-wallpapers (wallpaper--wallpapers))
+  (let ((wallpapers (wallpaper--wallpapers))
         (current-wallpapers wallpaper--current))
     (setq wallpaper--current nil)
     (dolist (wallpaper current-wallpapers)
-      (setq all-wallpapers (delq wallpaper all-wallpapers)))
+      (setq wallpapers (delq wallpaper wallpapers)))
     wallpapers))
 
 (defun wallpaper--num-monitors ()
