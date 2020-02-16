@@ -137,11 +137,15 @@ modification of its value may interfere with its proper behavior.")
   (directory-files-recursively wallpaper-directory ".[jpJP][engENG]+$" nil t t))
 
 (defun wallpaper--update-available ()
-  ;; Clear `wallpaper--current' while removing its values from `wallpapers'
-  (let ((wallpapers (wallpaper--wallpapers)))
-    (dolist (wallpaper wallpaper--current)
-      (setq wallpapers (delq wallpaper wallpapers)
-            wallpaper--current (delq wallpaper wallpaper--current)))
+  "Return the value returned by `wallpaper--wallpapers' with modification.
+
+This function removes the values in the list `wallpaper--current' from its
+return value and clears the list as well."
+  (let ((all-wallpapers (wallpaper--wallpapers))
+        (current-wallpapers wallpaper--current))
+    (setq wallpaper--current nil)
+    (dolist (wallpaper current-wallpapers)
+      (setq all-wallpapers (delq wallpaper all-wallpapers)))
     wallpapers))
 
 (defun wallpaper--num-monitors ()
