@@ -46,6 +46,9 @@
 (unless (executable-find "feh")
   (display-warning 'wallpaper "Could not find feh, is it installed?"))
 
+(unless (eq window-system 'x)
+  (display-warning 'wallpaper "This package is meant for X desktop sessions."))
+
 
 
 (defgroup wallpaper nil
@@ -133,25 +136,27 @@ modification of its value may interfere with its proper behavior.")
   "Return a list of absolute paths for images found in `wallpaper-directory'."
   (directory-files-recursively wallpaper-directory ".[jpJP][engENG]+$" nil t t))
 
+(defun wallpaper--update-available ()
+  ;; Clear `wallpaper--current' while removing its values from `wallpapers'
+  (let ((wallpapers (wallpaper--wallpapers)))
+    (dolist (wallpaper wallpaper--current)
+      (setq wallpapers (delq wallpaper wallpapers)
+            wallpaper--current (delq wallpaper wallpaper--current)))
+    wallpapers))
+
 (defun wallpaper--num-monitors ()
   "Return the number of connected monitors found by xrandr."
-  (length
-   (split-string
-    (shell-command-to-string
-     "xrandr | grep \\* | awk '{print $1}'"))))
+  (length (split-string (shell-command-to-string
+                         "xrandr | grep \\* | awk '{print $1}'"))))
 
 
 
 (defun wallpaper--random-command ()
   "Return a feh command for random wallpaper assignment."
   (let* ((command (concat "feh " (wallpaper--background)))
-         (wallpapers (wallpaper--wallpapers))
+         (wallpapers (wallpaper--update-available))
          (num-wallpapers (length wallpapers))
          (num-monitors (if wallpaper-single 1 (wallpaper--num-monitors))))
-    ;; Clear `wallpaper--current' while removing its values from `wallpapers'
-    (dolist (wallpaper wallpaper--current)
-      (setq wallpapers (delq wallpaper wallpapers)
-            wallpaper--current (delq wallpaper wallpaper--current)))
     ;; Add as many wallpapers to the command as there are monitors
     ;; Add the wallpapers used to `wallpaper--current'
     (dolist (monitor (number-sequence 1 num-monitors))

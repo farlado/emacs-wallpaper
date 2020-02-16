@@ -1,6 +1,7 @@
 #+title: =wallpaper.el=: Setting the wallpaper with Emacs
 #+subtitle: A literate Emacs package for wallpaper management
 #+author: Farlado
+#+startup: hideblocks
 
 * Table of contents :toc:quote:
 #+BEGIN_QUOTE
@@ -96,10 +97,13 @@ Eventually I'll get this project on MELPA, just you wait and see... Till then, y
           wallpaper-directory (expand-file-name "~/Pictures/wallpapers")))
 #+end_src
 
-However, no amount of hand-holding can ensure you have the dependency ~feh~ installed.
+However, no amount of hand-holding can ensure you have the dependency ~feh~ installed, or that you are loading this package while in an X desktop session.
 #+begin_src emacs-lisp :tangle "wallpaper.el"
   (unless (executable-find "feh")
     (display-warning 'wallpaper "Could not find feh, is it installed?"))
+
+  (unless (eq window-system 'x)
+    (display-warning 'wallpaper "This package is meant for X desktop sessions."))
 
   
 #+end_src
@@ -262,41 +266,28 @@ The process for static wallpapers is incredibly straightforward: for each wallpa
 #+end_src
 
 ** Random wallpaper(s)
-The overall process has a few over-arching steps. First, a list is gathered of all available wallpapers in =wallpaper-directory=. Then, the wallpapers currently in use are removed from that list. During this step, the list of wallpapers currently in use is also cleared. Lastly, for each monitor that can be detected as active by ~xrandr~, a random wallpaper with the proper style argument is appended to the command string.
+The overall process has two over-arching steps. First, a list is gathered of all available wallpapers in =wallpaper-directory=. Then, the wallpapers currently in use are removed from that list. During this step, the list of wallpapers currently in use is also cleared. Then, for each monitor that can be detected as active by ~xrandr~, a random wallpaper with the proper style argument is appended to the command string.
 #+name: wallpaper--random-command
 #+begin_src emacs-lisp :noweb yes
   (defun wallpaper--random-command ()
     "Return a feh command for random wallpaper assignment."
     (let* ((command (concat "feh " (wallpaper--background)))
-           (wallpapers (wallpaper--wallpapers))
+           (wallpapers (wallpaper--update-available))
            (num-wallpapers (length wallpapers))
            (num-monitors (if wallpaper-single 1 (wallpaper--num-monitors))))
-      <<clear-previous-wallpapers>>
-      <<assign-to-monitors>>
+      ;; Add as many wallpapers to the command as there are monitors
+      ;; Add the wallpapers used to `wallpaper--current'
+      (dolist (monitor (number-sequence 1 num-monitors))
+        (let ((wallpaper (nth (random num-wallpapers) wallpapers)))
+          (setq command (concat command (wallpaper--style) wallpaper " ")
+                wallpapers (delq wallpaper wallpapers))
+          (add-to-list 'wallpaper--current wallpaper)))
       ;; Return the command
       command))
 #+end_src
 
 *** Getting the available wallpapers
-Every file with the extension =png= or =jpg= (case-insensitive) inside of =wallpaper-directory= or its sub-directories is listed by the command ~wallpaper--wallpapers~.
-#+name: wallpaper--wallpapers
-#+begin_src emacs-lisp
-  (defun wallpaper--wallpapers ()
-    "Return a list of absolute paths for images found in `wallpaper-directory'."
-    (directory-files-recursively wallpaper-directory ".[jpJP][engENG]+$" nil t t))
-#+end_src
-
-*** Clearing previous wallpapers
-This is a surprisingly simple process: for each =wallpaper= found in =wallpaper--current=, remove the wallpaper from =wallpapers= assigned above and from =wallpaper--current=. The result should be that =wallpaper--current= becomes empty and the paths formerly in =wallpaper--current= are not in =wallpapers=.
-#+name: clear-previous-wallpapers
-#+begin_src emacs-lisp
-  ;; Clear `wallpaper--current' while removing its values from `wallpapers'
-  (dolist (wallpaper wallpaper--current)
-    (setq wallpapers (delq wallpaper wallpapers)
-          wallpaper--current (delq wallpaper wallpaper--current)))
-#+end_src
-
-This also means that a variable =wallpaper--current= must exist for storing the current wallpaper(s) between ~wallpaper-set-wallpaper~ calls.
+A variable =wallpaper--current= keeps track of the wallpaper(s) currently in use.
 #+name: wallpaper--current
 #+begin_src emacs-lisp
   (defvar wallpaper--current nil
@@ -306,29 +297,30 @@ This also means that a variable =wallpaper--current= must exist for storing the 
   modification of its value may interfere with its proper behavior.")
 #+end_src
 
+Every file with the extension =png= or =jpg= (case-insensitive) inside of =wallpaper-directory= or its sub-directories is listed by the command ~wallpaper--wallpapers~, and ~wallpaper--update-available~ clears =wallpaper--current= and returns a list of all wallpapers except those which were in =wallpaper--current=.
+#+name: wallpaper--wallpapers
+#+begin_src emacs-lisp
+  (defun wallpaper--wallpapers ()
+    "Return a list of absolute paths for images found in `wallpaper-directory'."
+    (directory-files-recursively wallpaper-directory ".[jpJP][engENG]+$" nil t t))
+
+  (defun wallpaper--update-available ()
+    ;; Clear `wallpaper--current' while removing its values from `wallpapers'
+    (let ((wallpapers (wallpaper--wallpapers)))
+      (dolist (wallpaper wallpaper--current)
+        (setq wallpapers (delq wallpaper wallpapers)
+              wallpaper--current (delq wallpaper wallpaper--current)))
+      wallpapers))
+#+end_src
+
 *** Getting the number of active monitors
 The function ~wallpaper--num-monitors~ is used to determine exactly how many monitors are connected, by splitting a string formed by a shell command with a bit of plumbing to print only one word per active monitor.
 #+name: wallpaper--num-monitors
 #+begin_src emacs-lisp
   (defun wallpaper--num-monitors ()
     "Return the number of connected monitors found by xrandr."
-    (length
-     (split-string
-      (shell-command-to-string
-       "xrandr | grep \\* | awk '{print $1}'"))))
-#+end_src
-
-*** Assign a wallpaper to each monitor
-For each monitor found, add a random =wallpaper= from =wallpapers= with the proper style argument to the ~feh~ command. Then, remove the wallpaper from the =wallpapers= list and add it to =wallpaper--current=. If =wallpaper-single= is non-nil, this is only done once, which applies the same wallpaper to all monitors.
-#+name: assign-to-monitors
-#+begin_src emacs-lisp
-  ;; Add as many wallpapers to the command as there are monitors
-  ;; Add the wallpapers used to `wallpaper--current'
-  (dolist (monitor (number-sequence 1 num-monitors))
-    (let ((wallpaper (nth (random num-wallpapers) wallpapers)))
-      (setq command (concat command (wallpaper--style) wallpaper " ")
-            wallpapers (delq wallpaper wallpapers))
-      (add-to-list 'wallpaper--current wallpaper)))
+    (length (split-string (shell-command-to-string
+                           "xrandr | grep \\* | awk '{print $1}'"))))
 #+end_src
 
 ** Arguments for ~feh~ command
