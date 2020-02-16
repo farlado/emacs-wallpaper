@@ -109,7 +109,7 @@ Right now, this thing is still quite rough around the edges. As it gets ready fo
   :properties:
   :header-args: :tangle "wallpaper.el"
   :end:
-Settings for this package can be configured using ~customize~ in Emacs. This can be done by doing =M-x customize-group RET wallpaper RET=.
+Settings for this package can be configured using ~customize~. This can be done by doing =M-x customize-group RET wallpaper RET=.
 #+begin_src emacs-lisp
   (defgroup wallpaper nil
     "Setting the wallpaper using Emacs."
