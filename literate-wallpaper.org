@@ -82,7 +82,7 @@ This package is licensed under version 3 of the GNU General Public License.
 #+end_src
 
 ** Installation
-Eventually I'll get this project on MELPA, just you wait and see... Till then, you're on your own to clone this repository and get it added to your =load-path=. An example configuration using ~use-package~ is included below:
+Eventually I'll get this package on MELPA, just you wait and see... Till then, you're on your own to clone this repository and get it added to your =load-path=. An example configuration using ~use-package~ is included below:
 #+begin_src emacs-lisp
   ;; This is an example `use-package' configuration
   ;; It is not tangled into wallpaper.el
