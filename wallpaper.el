@@ -154,7 +154,7 @@ return value and clears the list as well."
 
 (defun wallpaper--random-command ()
   "Return a feh command for random wallpaper assignment."
-  (let* ((command (concat "feh " (wallpaper--background)))
+  (let* ((command (concat "feh --no-fehbg " (wallpaper--background)))
          (wallpapers (wallpaper--update-available))
          (num-wallpapers (length wallpapers))
          (num-monitors (if wallpaper-single 1 (wallpaper--num-monitors))))
@@ -170,7 +170,7 @@ return value and clears the list as well."
 
 (defun wallpaper--static-command ()
   "Return a feh command from wallpapers in `wallpaper-static-wallpaper-list'."
-  (let ((command (concat "feh " (wallpaper--background))))
+  (let ((command (concat "feh --no-fehbg " (wallpaper--background))))
     ;; Add a wallpaper for each wallpaper in `wallpaper-static-wallpaper-list'
     (dolist (wallpaper wallpaper-static-wallpaper-list)
       (setq command (concat command (wallpaper--style) wallpaper " ")))
