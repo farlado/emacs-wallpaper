@@ -5,7 +5,7 @@
 
 * Table of contents :toc:quote:
 #+BEGIN_QUOTE
-- [[#about][About]]
+- [[#about-this-package][About this Package]]
   - [[#license][License]]
   - [[#installation][Installation]]
   - [[#caveat-lector][Caveat lector]]
@@ -23,90 +23,108 @@
 - [[#cycling-wallpapers-automatically][Cycling wallpapers automatically]]
 #+END_QUOTE
 
-* About
-Ricing [[https://github.com/ch11ng/exwm][EXWM]] is pretty cool, but even cooler is being able to manage everything about your rice using Emacs. This package is meant to make that a little bit easier, by managing your wallpapers for you. Compatibility is only guaranteed in X desktop sessions.
+* About this Package
 
-This package was written literately, so code is included alongside the documentation.
-#+begin_src emacs-lisp :noweb yes :tangle "wallpaper.el"
-  ;;; wallpaper.el --- Setting the desktop wallpaper -*- lexical-binding: t -*-
+  Ricing [[https://github.com/ch11ng/exwm][EXWM]] is pretty cool, but even cooler is being able to manage everything
+  about your rice using Emacs. This package is meant to make that a little bit
+  easier, by managing your wallpapers for you. Compatibility is only guaranteed
+  in X desktop sessions.
 
-  ;; Copyright (C) 2020
+  This package was written literately, so code is included alongside the
+  documentation.
 
-  ;; Author: Farlado <farlado@sdf.org>
-  ;; URL: https://github.com/farlado/emacs-wallpaper
-  ;; Keywords: unix, wallpaper, extensions
-  ;; Package-Version: 1.0.0
-  ;; Package-Requires: ((emacs "25.1"))
+  #+begin_src emacs-lisp :noweb yes :tangle "wallpaper.el"
+    ;;; wallpaper.el --- Setting the desktop wallpaper -*- lexical-binding: t -*-
 
-  ;; This file is not part of GNU Emacs.
+    ;; Copyright (C) 2020
 
-  <<license>>
+    ;; Author: Farlado <farlado@sdf.org>
+    ;; URL: https://github.com/farlado/emacs-wallpaper
+    ;; Keywords: unix, wallpaper, extensions
+    ;; Package-Version: 1.0.1
+    ;; Package-Requires: ((emacs "25.1"))
 
-  
+    ;; This file is not part of GNU Emacs.
 
-  ;;; Commentary:
+    <<license>>
 
-  ;; Ricing `exwm' is pretty cool, but even cooler is being able to manage
-  ;; everything about your rice using Emacs.  This package is meant to
-  ;; make that a little bit easier, by managing your wallpapers for you.
-  ;;
-  ;; By default, wallpapers are assumed to be stored in the path
-  ;; $XDG_CONFIG_HOME/wallpapers, but you are free to change this,
-  ;; or set a list of static wallpapers to use instead of randomly
-  ;; choosing what wallpapers to use.  The program used to set the
-  ;; wallpaper is feh, so make sure you have it installed.
-  ;;
-  ;; Compatibility is only guaranteed with use of an X desktop session.
+    
 
-  
+    ;;; Commentary:
 
-  ;;; Code:
-#+end_src
+    ;; Ricing `exwm' is pretty cool, but even cooler is being able to manage
+    ;; everything about your rice using Emacs.  This package is meant to
+    ;; make that a little bit easier, by managing your wallpapers for you.
+    ;;
+    ;; By default, wallpapers are assumed to be stored in the path
+    ;; $XDG_CONFIG_HOME/wallpapers, but you are free to change this,
+    ;; or set a list of static wallpapers to use instead of randomly
+    ;; choosing what wallpapers to use.  The program used to set the
+    ;; wallpaper is feh, so make sure you have it installed.
+    ;;
+    ;; Compatibility is only guaranteed with use of an X desktop session.
+
+    
+
+    ;;; Code:
+  #+end_src
 
 ** License
-This package is licensed under version 3 of the GNU General Public License.
-#+name: license
-#+begin_src emacs-lisp
-  ;; This program is free software; you can redistribute it and/or modify
-  ;; it under the terms of the GNU General Public License as published by
-  ;; the Free Software Foundation, either version 3 of the License, or
-  ;; (at your option) any later version.
 
-  ;; This program is distributed in the hope that it will be useful,
-  ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ;; GNU General Public License for more details.
+   This package is licensed under version 3 of the GNU General Public License.
 
-  ;; You should have received a copy of the GNU General Public License
-  ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#+end_src
+   #+name: license
+   #+begin_src emacs-lisp
+     ;; This program is free software; you can redistribute it and/or modify
+     ;; it under the terms of the GNU General Public License as published by
+     ;; the Free Software Foundation, either version 3 of the License, or
+     ;; (at your option) any later version.
+
+     ;; This program is distributed in the hope that it will be useful,
+     ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+     ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     ;; GNU General Public License for more details.
+
+     ;; You should have received a copy of the GNU General Public License
+     ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+   #+end_src
 
 ** Installation
-Eventually I'll get this package on MELPA, just you wait and see... Till then, you're on your own to clone this repository and get it added to your =load-path=. An example configuration using ~use-package~ is included below:
-#+begin_src emacs-lisp
-  ;; This is an example `use-package' configuration
-  ;; It is not tangled into wallpaper.el
-  (use-package wallpaper
-    :load-path "lisp/wallpaper"
-    :hook ((exwm-randr-screen-change . wallpaper-set-wallpaper)
-           (after-init . wallpaper-cycle-mode))
-    :config
-    (setq wallpaper-single t
-          wallpaper-style 'scale
-          wallpaper-cycle-interval 45
-          wallpaper-directory (expand-file-name "~/Pictures/wallpapers")))
-#+end_src
 
-However, no amount of hand-holding can ensure you have the dependency ~feh~ installed, or that you are loading this package while in an X desktop session.
-#+begin_src emacs-lisp :tangle "wallpaper.el"
-  (unless (executable-find "feh")
-    (display-warning 'wallpaper "Could not find feh, is it installed?"))
+   Eventually I'll get this package on MELPA, just you wait and see... Till
+   then, you're on your own to clone this repository and get it added to your
+   =load-path=. An example configuration using ~use-package~ is included below:
 
-  
-#+end_src
+   #+begin_src emacs-lisp
+     ;; This is an example `use-package' configuration
+     ;; It is not tangled into wallpaper.el
+     (use-package wallpaper
+       :load-path "lisp/wallpaper"
+       :hook ((exwm-randr-screen-change . wallpaper-set-wallpaper)
+              (after-init . wallpaper-cycle-mode))
+       :custom ((wallpaper-single t)
+                (wallpaper-style 'scale)
+                (wallpaper-cycle-interval 45)
+                (wallpaper-directory "~/Pictures/wallpapers")))
+   #+end_src
+
+   However, no amount of hand-holding can ensure you have the dependency ~feh~
+   installed, or that you are loading this package while in an X desktop
+   session.
+
+   #+begin_src emacs-lisp :tangle "wallpaper.el"
+     (unless (executable-find "feh")
+       (display-warning 'wallpaper "Could not find feh, is it installed?"))
+
+     
+   #+end_src
 
 ** Caveat lector
-Right now, this thing is still quite rough around the edges. As it gets ready for MELPA, it'll probably go through a lot of fixes.
+
+   Right now, this thing is still quite rough around the edges. As it gets
+   ready for MELPA, it'll probably go through a lot of fixes. There's also a
+   goal of refactoring this to allow faster implementation of various methods
+   of setting the wallpaper, so there might be some mess on master.
 
 * Configuration
   :properties:
