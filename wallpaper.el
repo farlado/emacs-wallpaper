@@ -87,7 +87,7 @@ workspace, WALLPAPERS are the wallpapers to be set."
 
 Wallpapers must be entered in this list as absolute paths, in the order
 of your monitors.  This variable should be nil if you intend to use
-`wallpaper-cycle-mode'."
+function `wallpaper-cycle-mode'."
   :tag "Static wallpaper(s)"
   :group 'wallpaper
   :type 'string)
@@ -95,7 +95,7 @@ of your monitors.  This variable should be nil if you intend to use
 
 
 (defcustom wallpaper-cycle-interval 15
-  "Interval in seconds for cycling in `wallpaper-cycle-mode'."
+  "Interval in seconds for cycling in function `wallpaper-cycle-mode'."
   :tag "Wallpaper cycle interval"
   :group 'wallpaper
   :type 'integer)
@@ -272,7 +272,7 @@ See `wallpaper-per-workspace-alist' and `wallpaper-per-workspace-get'."
 (defun wallpaper--per-workspace-wallpapers ()
   "Return the wallpapers for the given workspace.
 
-Returns nil if `wallpaper-per-workspace-mode' is not active."
+Returns nil if variable `wallpaper-per-workspace-mode' is nil."
   (when wallpaper-per-workspace-mode
     (split-string (or (cdr (assq (funcall wallpaper-per-workspace-get)
                                  wallpaper-per-workspace-alist))
