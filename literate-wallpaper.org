@@ -644,7 +644,9 @@
       (cancel-function-timers 'wallpaper-set-wallpaper)
       (when wallpaper-cycle-mode
         (run-with-timer 0 wallpaper-cycle-interval 'wallpaper-set-wallpaper)))
+  #+end_src
 
+  #+begin_src emacs-lisp :exports none :noweb yes
     <<cycle-funcs>>
   #+end_src
 
@@ -677,7 +679,9 @@
       (if wallpaper-per-workspace-mode
           (add-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)
         (remove-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)))
+  #+end_src
 
+  #+begin_src emacs-lisp :exports none :noweb yes
     <<per-workspace-funcs>>
   #+end_src
 
