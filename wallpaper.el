@@ -86,7 +86,7 @@ workspace, WALLPAPERS are the wallpapers to be set."
   "List of wallpapers to use instead of randomly finding wallpapers.
 
 Wallpapers must be entered in this list as absolute paths, in the order
-of your monitors.  This variable should be nil if you intend to use
+of your monitors.  This string should be left blank if you intend to use
 function `wallpaper-cycle-mode'."
   :tag "Static wallpaper(s)"
   :group 'wallpaper
