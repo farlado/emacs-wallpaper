@@ -1,4 +1,4 @@
-;;; wallpaper.el --- Setting the desktop wallpaper -*- lexical-binding: t -*-
+;;; wallpaper.el --- Setting the wallpaper -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2020
 
@@ -41,7 +41,7 @@
 ;; - Any that use vdesk for virtual desktops
 ;;
 ;; The following might work but aren't fully tested:
-;; - i3wm
+;; - i3
 ;;
 ;; Compatibility is only guaranteed with use of an X desktop session.
 
@@ -51,6 +51,8 @@
 
 (unless (executable-find "feh")
   (display-warning 'wallpaper "Could not find feh, is it installed?"))
+
+(require 'cl-lib)
 
 
 
@@ -80,7 +82,7 @@ workspace, WALLPAPERS are the wallpapers to be set."
 
 
 
-(defcustom wallpaper-static-wallpaper-list ""
+(defcustom wallpaper-static-wallpapers ""
   "List of wallpapers to use instead of randomly finding wallpapers.
 
 Wallpapers must be entered in this list as absolute paths, in the order
@@ -149,7 +151,7 @@ The default option is fill."
 
 This function will either choose a random wallpaper from
 `wallpaper-directory' or use the wallpapers listed in
-`wallpaper-static-wallpaper-list'."
+`wallpaper-static-wallpapers'."
   (interactive)
   (let ((wallpapers (or (wallpaper--per-workspace-wallpapers)
                         (wallpaper--static-wallpapers)
@@ -164,7 +166,7 @@ This function will either choose a random wallpaper from
 
 (defun wallpaper--scaling ()
   "Return the wallpaper scaling style to use."
-  (case wallpaper-scaling
+  (cl-case wallpaper-scaling
     (scale "--bg-scale ")
     (max "--bg-max ")
     (fill "--bg-fill ")
@@ -177,84 +179,9 @@ This function will either choose a random wallpaper from
 
 
 
-(defun wallpaper--per-workspace-wallpapers ()
-  "Return the wallpapers for the given workspace.
-
-Returns nil if `wallpaper-per-workspace-mode' is not active."
-  (when wallpaper-per-workspace-mode
-    (split-string (or (cdr (assq (funcall wallpaper-per-workspace-get)
-                                 wallpaper-per-workspace-alist))
-                      ""))))
-
-(defun wallpaper-per-workspace-exwm-get ()
-  "Return the current EXWM workspace."
-  exwm-workspace-current-index)
-
-(defun wallpaper-per-workspace-i3-get ()
-  "Get the current i3wm workspace."
-  (string-to-number
-   (shell-command-to-string
-    (concat "i3-msg -t get_workspaces | "
-            "jq -r '.[] | select(.focused==true).name'"))))
-
-(defun wallpaper-per-workspace-vdesk-get ()
-  "Get the current vdesk."
-  (string-to-number (shell-command-to-string "vdesk")))
-
-
-
 (defun wallpaper--static-wallpapers ()
   "Return `wallpaper-static-wallpapers' as a split string."
   (split-string wallpaper-static-wallpapers))
-
-
-
-(defun wallpaper--random-wallpapers ()
-  "Return a string of random wallpapers for each monitor.
-
-If `wallpaper-single' is non-nil, only one wallpaper is returned."
-  (let* ((available (wallpaper--cycle-update-available))
-         (num-available (length available))
-         (num-monitors (if wallpaper-single 1 (wallpaper--num-monitors)))
-         (wallpapers ""))
-    ;; Add as many wallpapers to the string as there are monitors
-    ;; Add the wallpapers used to `wallpaper--current'
-    (dotimes (monitor num-monitors)
-      (let ((wallpaper (nth (random num-available) available)))
-        (setq wallpapers (concat wallpapers wallpaper " ")
-              available (delq wallpaper available))
-        (add-to-list 'wallpaper--current wallpaper)))
-    ;; Return the string of wallpapers
-    wallpapers))
-
-(defun wallpaper--cycle-wallpapers ()
-  "Return a list of images found in `wallpaper-directory'."
-  (directory-files-recursively wallpaper-directory
-                               ".[jpJP][engENG]+$"
-                               nil t t))
-
-(defun wallpaper--cycle-update-available ()
-  "Return `wallpaper--wallpapers' with modification.
-
-This function removes the values in the list `wallpaper--current' from
-its return value and clears the list as well."
-  (let ((wallpapers (wallpaper--wallpapers))
-        (current-wallpapers wallpaper--current))
-    (setq wallpaper--cycle-current nil)
-    (dolist (wallpaper current-wallpapers)
-      (setq wallpapers (delq wallpaper wallpapers)))
-    wallpapers))
-
-(defvar wallpaper--current nil
-  "List of the wallpaper(s) currently in use.
-
-This variable is set automatically by `wallpaper-set-wallpaper'.  Hand
-modification of its value may interfere with its proper behavior.")
-
-(defun wallpaper--num-monitors ()
-  "Return the number of connected monitors found by xrandr."
-  (length (split-string (shell-command-to-string
-                         "xrandr | grep \\* | awk '{print $1}'"))))
 
 
 
@@ -276,8 +203,56 @@ at the interval defined by `wallpaper-cycle-interval'.  See function
   (when wallpaper-cycle-mode
     (run-with-timer 0 wallpaper-cycle-interval 'wallpaper-set-wallpaper)))
 
+(defvar wallpaper--current nil
+  "List of the wallpaper(s) currently in use.
+
+This variable is set automatically.  Hand modification of its value
+may interfere with its proper behavior.")
+
+(defun wallpaper--random-wallpapers ()
+  "Return a string of random wallpapers for each monitor.
+
+If `wallpaper-single' is non-nil, only one wallpaper is returned."
+  (let* ((available (wallpaper--update-available))
+         (num-available (length available))
+         (num-monitors (if wallpaper-single 1 (wallpaper--num-monitors)))
+         (wallpapers ""))
+    ;; Add as many wallpapers to the string as there are monitors
+    ;; Add the wallpapers used to `wallpaper--current'
+    (dotimes (_ num-monitors)
+      (let ((wallpaper (nth (random num-available) available)))
+        (setq wallpapers (concat wallpapers wallpaper " ")
+              available (delq wallpaper available))
+        (add-to-list 'wallpaper--current wallpaper)))
+    ;; Return the string of wallpapers split
+    (split-string wallpapers)))
+
+(defun wallpaper--wallpapers ()
+  "Return a list of images found in `wallpaper-directory'."
+  (directory-files-recursively wallpaper-directory
+                               ".[jpJP][engENG]+$"
+                               nil t t))
+
+(defun wallpaper--update-available ()
+  "Return `wallpaper--wallpapers' with modification.
+
+This function removes the values in the list `wallpaper--current' from
+its return value and clears the list as well."
+  (let ((wallpapers (wallpaper--wallpapers))
+        (current-wallpapers wallpaper--current))
+    (setq wallpaper--current nil)
+    (dolist (wallpaper current-wallpapers)
+      (setq wallpapers (delq wallpaper wallpapers)))
+    wallpapers))
+
+(defun wallpaper--num-monitors ()
+  "Return the number of connected monitors found by xrandr."
+  (length (split-string (shell-command-to-string
+                         "xrandr | grep \\* | awk '{print $1}'"))))
+
 
 
+;;;###autoload
 (define-minor-mode wallpaper-per-workspace-mode
   "Toggle Wallpaper Per Workspace mode.
 
@@ -293,6 +268,36 @@ See `wallpaper-per-workspace-alist' and `wallpaper-per-workspace-get'."
   (if wallpaper-per-workspace-mode
       (add-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)
     (remove-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)))
+
+(defun wallpaper--per-workspace-wallpapers ()
+  "Return the wallpapers for the given workspace.
+
+Returns nil if `wallpaper-per-workspace-mode' is not active."
+  (when wallpaper-per-workspace-mode
+    (split-string (or (cdr (assq (funcall wallpaper-per-workspace-get)
+                                 wallpaper-per-workspace-alist))
+                      ""))))
+
+(defun wallpaper-per-workspace-exwm-get ()
+  "Return the current EXWM workspace."
+  (if (boundp 'exwm-workspace-current-index)
+      exwm-workspace-current-index
+    (display-warning 'wallpaper "Cannot get current EXWM workspace!")))
+
+(defun wallpaper-per-workspace-i3-get ()
+  "Get the current i3 workspace."
+  (if (= (shell-command "pgrep i3") 0)
+      (string-to-number
+       (shell-command-to-string
+        (concat "i3-msg -t get_workspaces | "
+                "jq -r '.[] | select(.focused==true).name'")))
+    (display-warning 'wallpaper "Cannot get current i3 workspace!")))
+
+(defun wallpaper-per-workspace-vdesk-get ()
+  "Get the current vdesk."
+  (if (executable-find "vdesk")
+      (string-to-number (shell-command-to-string "vdesk"))
+    (display-warning 'wallpaper "vdesk is not installed!")))
 
 
 
