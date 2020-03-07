@@ -5,7 +5,7 @@
 ;; Author: Farlado <farlado@sdf.org>
 ;; URL: https://github.com/farlado/emacs-wallpaper
 ;; Keywords: unix, wallpaper, extensions
-;; Package-Version: 1.0.1
+;; Package-Version: 1.0.5
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; This file is not part of GNU Emacs.
@@ -36,8 +36,11 @@
 ;; for setting a specific wallpaper or wallpapers in each workspace or
 ;; a window manager.
 ;;
-;; The following window managers work with `wallpaper-per-workspace-mode':
+;; The following window managers are known to work with this package:
 ;; - EXWM
+;; - Any that use vdesk for virtual desktops
+;;
+;; The following might work but aren't fully tested:
 ;; - i3wm
 ;;
 ;; Compatibility is only guaranteed with use of an X desktop session.
@@ -99,7 +102,7 @@ one path is listed in `wallpaper-static-wallpapers'."
   :group 'wallpaper
   :type 'boolean)
 
-(defcustom wallpaper-cycle-directory "~/.config/wallpapers"
+(defcustom wallpaper-directory (expand-file-name "~/.config/wallpapers")
   "The directory in which to look for wallpapers."
   :tag "Wallpaper directory"
   :group 'wallpaper
@@ -180,6 +183,10 @@ Returns nil if `wallpaper-per-workspace-mode' is not active."
     (concat "i3-msg -t get_workspaces | "
             "jq -r '.[] | select(.focused==true).name'"))))
 
+(defun wallpaper-per-workspace-vdesk-get ()
+  "Get the current vdesk."
+  (string-to-number (shell-command-to-string "vdesk")))
+
 (defun wallpaper--static-wallpapers ()
   "Return `wallpaper-static-wallpapers' as a split string."
   (split-string wallpaper-static-wallpapers))
@@ -204,7 +211,7 @@ If `wallpaper-single' is non-nil, only one wallpaper is returned."
 
 (defun wallpaper--cycle-wallpapers ()
   "Return a list of images found in `wallpaper-directory'."
-  (directory-files-recursively wallpaper-cycle-directory
+  (directory-files-recursively wallpaper-directory
                                ".[jpJP][engENG]+$"
                                nil t t))
 
