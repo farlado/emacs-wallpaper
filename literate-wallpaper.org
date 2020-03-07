@@ -31,7 +31,7 @@
   about your rice using Emacs. This package is meant to make that a little bit
   easier, by managing your wallpapers for you. Compatibility is only guaranteed
   in X desktop sessions. Using this package with EXWM is the intention, but it
-  can serve as a wallpaper daemon on other window managers.
+  can serve as a wallpaper daemon on other window managers with some work.
 
   This package was written literately, so code is included alongside the
   documentation.
@@ -44,7 +44,7 @@
     ;; Author: Farlado <farlado@sdf.org>
     ;; URL: https://github.com/farlado/emacs-wallpaper
     ;; Keywords: unix, wallpaper, extensions
-    ;; Package-Version: 1.0.5
+    ;; Package-Version: 1.1.0
     ;; Package-Requires: ((emacs "25.1"))
 
     ;; This file is not part of GNU Emacs.
