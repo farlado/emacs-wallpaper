@@ -229,13 +229,9 @@ If `wallpaper-single' is non-nil, only one wallpaper is returned."
 
 (defun wallpaper--wallpapers ()
   "Return a list of images found in `wallpaper-directory'."
-  (if (< emacs-major-version 27)
-      (directory-files-recursively wallpaper-directory
-                                   ".[jpJP][engENG]+$"
-                                   nil)
-    (directory-files-recursively wallpaper-directory
-                                 ".[jpJP][engENG]+$"
-                                 nil t t)))
+  (directory-files-recursively wallpaper-directory
+                               ".[jpJP][engENG]+$"
+                               nil))
 
 (defun wallpaper--update-available ()
   "Return `wallpaper--wallpapers' with modification.
