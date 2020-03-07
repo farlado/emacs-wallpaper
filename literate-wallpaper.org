@@ -10,7 +10,6 @@
 - [[#about-this-package][About this Package]]
   - [[#license][License]]
   - [[#installation][Installation]]
-  - [[#caveat-lector][Caveat lector]]
 - [[#configuration][Configuration]]
   - [[#per-workspace-wallpapers][Per-workspace wallpapers]]
   - [[#static-wallpapers][Static wallpaper(s)]]
@@ -100,9 +99,9 @@
 
 ** Installation
 
-   Eventually I'll get this package on MELPA, just you wait and see... Till
-   then, you're on your own to clone this repository and get it added to your
-   =load-path=. An example configuration using ~use-package~ is included below:
+   It'll be on MELPA [[https://github.com/melpa/melpa/pull/6737][eventually]]. Till then, you're on your own to clone this
+   repository and get it added to your =load-path=. An example configuration
+   using ~use-package~ is included below:
 
    #+begin_src emacs-lisp :tangle no
      ;; This is an example `use-package' configuration
@@ -126,18 +125,12 @@
        (display-warning 'wallpaper "Could not find feh, is it installed?"))
    #+end_src
 
-   This package also depends on ~cl-lib~.
+   This package also depends on ~cl-lib~, and uses functions that are not
+   compatible with versions of Emacs before 25.
 
    #+begin_src emacs-lisp
      (require 'cl-lib)
    #+end_src
-
-** Caveat lector
-
-   Right now, this thing is still quite rough around the edges. As it gets
-   ready for MELPA, it'll probably go through a lot of fixes. Do not hesitate
-   to open an issue or request a new feature, and I will see to it that I do
-   what I can.
 
 * Configuration
 
