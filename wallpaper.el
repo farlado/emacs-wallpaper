@@ -60,6 +60,8 @@
   :group 'environment
   :prefix "wallpaper-")
 
+
+
 (defcustom wallpaper-per-workspace-alist nil
   "List of wallpapers per workspace.
 
@@ -76,6 +78,8 @@ workspace, WALLPAPERS are the wallpapers to be set."
   :group 'wallpaper
   :type 'function)
 
+
+
 (defcustom wallpaper-static-wallpaper-list ""
   "List of wallpapers to use instead of randomly finding wallpapers.
 
@@ -86,8 +90,10 @@ of your monitors.  This variable should be nil if you intend to use
   :group 'wallpaper
   :type 'string)
 
+
+
 (defcustom wallpaper-cycle-interval 15
-  "Interval in seconds for cycling between wallpapers in wallpaper slideshows."
+  "Interval in seconds for cycling in `wallpaper-cycle-mode'."
   :tag "Wallpaper cycle interval"
   :group 'wallpaper
   :type 'integer)
@@ -107,6 +113,8 @@ one path is listed in `wallpaper-static-wallpapers'."
   :tag "Wallpaper directory"
   :group 'wallpaper
   :type 'string)
+
+
 
 (defcustom wallpaper-scaling 'fill
   "What style of wallpaper scaling to use.
@@ -133,6 +141,8 @@ The default option is fill."
   :group 'wallpaper
   :type 'string)
 
+
+
 ;;;###autoload
 (defun wallpaper-set-wallpaper ()
   "Set the wallpaper.
@@ -150,6 +160,8 @@ This function will either choose a random wallpaper from
     (start-process-shell-command
      "Wallpaper" nil command)))
 
+
+
 (defun wallpaper--scaling ()
   "Return the wallpaper scaling style to use."
   (case wallpaper-scaling
@@ -162,6 +174,8 @@ This function will either choose a random wallpaper from
 (defun wallpaper--background ()
   "Return the background color to use as an argument for feh."
   (concat "--image-bg '" wallpaper-background "' "))
+
+
 
 (defun wallpaper--per-workspace-wallpapers ()
   "Return the wallpapers for the given workspace.
@@ -187,9 +201,13 @@ Returns nil if `wallpaper-per-workspace-mode' is not active."
   "Get the current vdesk."
   (string-to-number (shell-command-to-string "vdesk")))
 
+
+
 (defun wallpaper--static-wallpapers ()
   "Return `wallpaper-static-wallpapers' as a split string."
   (split-string wallpaper-static-wallpapers))
+
+
 
 (defun wallpaper--random-wallpapers ()
   "Return a string of random wallpapers for each monitor.
@@ -220,14 +238,14 @@ If `wallpaper-single' is non-nil, only one wallpaper is returned."
 
 This function removes the values in the list `wallpaper--current' from
 its return value and clears the list as well."
-  (let ((wallpapers (wallpaper--cycle-wallpapers))
-        (current-wallpapers wallpaper--cycle-current))
+  (let ((wallpapers (wallpaper--wallpapers))
+        (current-wallpapers wallpaper--current))
     (setq wallpaper--cycle-current nil)
     (dolist (wallpaper current-wallpapers)
       (setq wallpapers (delq wallpaper wallpapers)))
     wallpapers))
 
-(defvar wallpaper--cycle-current nil
+(defvar wallpaper--current nil
   "List of the wallpaper(s) currently in use.
 
 This variable is set automatically by `wallpaper-set-wallpaper'.  Hand
@@ -237,6 +255,8 @@ modification of its value may interfere with its proper behavior.")
   "Return the number of connected monitors found by xrandr."
   (length (split-string (shell-command-to-string
                          "xrandr | grep \\* | awk '{print $1}'"))))
+
+
 
 ;;;###autoload
 (define-minor-mode wallpaper-cycle-mode
@@ -251,10 +271,12 @@ at the interval defined by `wallpaper-cycle-interval'.  See function
   (wallpaper--toggle-cycle))
 
 (defun wallpaper--toggle-cycle ()
-  "Stop all existent `wallpaper-set-wallpaper' timers and start a new one if `wallpaper-cycle-mode' is non-nil."
+  "Stop or start a `wallpaper-set-wallpaper' timer."
   (cancel-function-timers 'wallpaper-set-wallpaper)
   (when wallpaper-cycle-mode
     (run-with-timer 0 wallpaper-cycle-interval 'wallpaper-set-wallpaper)))
+
+
 
 (define-minor-mode wallpaper-per-workspace-mode
   "Toggle Wallpaper Per Workspace mode.
@@ -271,6 +293,8 @@ See `wallpaper-per-workspace-alist' and `wallpaper-per-workspace-get'."
   (if wallpaper-per-workspace-mode
       (add-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)
     (remove-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)))
+
+
 
 (provide 'wallpaper)
 

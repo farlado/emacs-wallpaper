@@ -124,8 +124,6 @@
    #+begin_src emacs-lisp :tangle "wallpaper.el"
      (unless (executable-find "feh")
        (display-warning 'wallpaper "Could not find feh, is it installed?"))
-
-     
    #+end_src
 
 ** Caveat lector
@@ -140,6 +138,10 @@
   :header-args: :tangle "wallpaper.el"
   :end:
 
+  #+begin_src emacs-lisp :exports none
+    
+  #+end_src
+
   Settings for this package can be configured using ~customize~. This can be done
   by doing =M-x customize-group RET wallpaper RET=.
 
@@ -152,6 +154,11 @@
   #+end_src
 
 ** Per-workspace wallpapers
+
+   #+begin_src emacs-lisp :exports none
+     
+   #+end_src
+
 *** Choosing wallpapers for workspaces
 
     If you wish to have a unique wallpaper or set of wallpapers for each
@@ -206,6 +213,10 @@
 
 ** Static wallpaper(s)
 
+   #+begin_src emacs-lisp :exports none
+     
+   #+end_src
+
    If you only want to use a certain wallpaper or set of wallpapers across
    monitors, set =wallpaper-static-wallpaper-list= to a string containing multiple
    absolute paths to the desired wallpapers, in the order of the monitors they
@@ -233,15 +244,25 @@
    #+end_src
 
 ** Cycling wallpapers
+
+   #+begin_src emacs-lisp :exports none
+     
+   #+end_src
+
 *** Wallpaper cycle speed
-If you are cycling through your wallpapers automatically and want to make wallpaper cycling faster or slower, set =wallpaper-cycle-interval= to the number of seconds you want to see each wallpaper. The default is a likely blazing fast fifteen seconds.
-#+begin_src emacs-lisp
-  (defcustom wallpaper-cycle-interval 15
-    "Interval in seconds for cycling between wallpapers in wallpaper slideshows."
-    :tag "Wallpaper cycle interval"
-    :group 'wallpaper
-    :type 'integer)
-#+end_src
+
+    If you are cycling through your wallpapers automatically and want to make
+    wallpaper cycling faster or slower, set =wallpaper-cycle-interval= to the
+    number of seconds you want to see each wallpaper. The default is a likely
+    blazing fast fifteen seconds.
+
+    #+begin_src emacs-lisp
+      (defcustom wallpaper-cycle-interval 15
+        "Interval in seconds for cycling in `wallpaper-cycle-mode'."
+        :tag "Wallpaper cycle interval"
+        :group 'wallpaper
+        :type 'integer)
+    #+end_src
 
 *** Setting multiple wallpapers
 
@@ -276,6 +297,11 @@ If you are cycling through your wallpapers automatically and want to make wallpa
     #+end_src
 
 ** Wallpaper style
+
+   #+begin_src emacs-lisp :exports none
+     
+   #+end_src
+
 *** Scaling
 
     There are five values possible for =wallpaper-scaling=:
@@ -324,6 +350,10 @@ If you are cycling through your wallpapers automatically and want to make wallpa
 
 * Setting the wallpaper once
 
+  #+begin_src emacs-lisp :exports none
+    
+  #+end_src
+
   The function ~wallpaper-set-wallpaper~ can be used to set the wallpaper one
   time. If =wallpaper-static-wallpaper-list= is not set, it will randomly choose
   a PNG or JPG image found in =wallpaper-directory=. This function can be called
@@ -362,6 +392,10 @@ If you are cycling through your wallpapers automatically and want to make wallpa
 
 ** Arguments for ~feh~ command
 
+   #+begin_src emacs-lisp :exports none
+     
+   #+end_src
+
    In order to properly form the wallpaper setting command, functions have been
    defined to return the flags required to properly construct the command.
 
@@ -393,21 +427,24 @@ If you are cycling through your wallpapers automatically and want to make wallpa
     #+end_src
 
 ** Per-workspace wallpaper(s)
-*** Getting the wallpapers for the workspace
 
-    This one seemed simple at first, but it got tricky when I realized that I
-    need to account for the minor mode involved in setting it up.
+   #+begin_src emacs-lisp :exports none
+     
+   #+end_src
 
-    #+begin_src emacs-lisp
-      (defun wallpaper--per-workspace-wallpapers ()
-        "Return the wallpapers for the given workspace.
+   This one seemed simple at first, but it got tricky when I realized that I
+   need to account for the minor mode involved in setting it up.
 
-      Returns nil if `wallpaper-per-workspace-mode' is not active."
-        (when wallpaper-per-workspace-mode
-          (split-string (or (cdr (assq (funcall wallpaper-per-workspace-get)
-                                       wallpaper-per-workspace-alist))
-                            ""))))
-    #+end_src
+   #+begin_src emacs-lisp
+     (defun wallpaper--per-workspace-wallpapers ()
+       "Return the wallpapers for the given workspace.
+
+     Returns nil if `wallpaper-per-workspace-mode' is not active."
+       (when wallpaper-per-workspace-mode
+         (split-string (or (cdr (assq (funcall wallpaper-per-workspace-get)
+                                      wallpaper-per-workspace-alist))
+                           ""))))
+   #+end_src
 
 *** Getting the current workspace in EXWM
 
@@ -444,6 +481,10 @@ If you are cycling through your wallpapers automatically and want to make wallpa
 
 ** Static wallpaper(s)
 
+   #+begin_src emacs-lisp :exports none
+     
+   #+end_src
+
    Plain dead simple.
 
    #+begin_src emacs-lisp
@@ -453,6 +494,10 @@ If you are cycling through your wallpapers automatically and want to make wallpa
    #+end_src
 
 ** Random wallpaper(s)
+
+   #+begin_src emacs-lisp :exports none
+     
+   #+end_src
 
    The overall process has two over-arching steps. First, a list is gathered of
    all available wallpapers in =wallpaper-directory=. Then, the wallpapers
@@ -501,19 +546,19 @@ If you are cycling through your wallpapers automatically and want to make wallpa
 
       This function removes the values in the list `wallpaper--current' from
       its return value and clears the list as well."
-        (let ((wallpapers (wallpaper--cycle-wallpapers))
-              (current-wallpapers wallpaper--cycle-current))
+        (let ((wallpapers (wallpaper--wallpapers))
+              (current-wallpapers wallpaper--current))
           (setq wallpaper--cycle-current nil)
           (dolist (wallpaper current-wallpapers)
             (setq wallpapers (delq wallpaper wallpapers)))
           wallpapers))
     #+end_src
 
-    A variable =wallpaper--cycle-current= keeps track of the current
+    A variable =wallpaper--current= keeps track of the current
     wallpaper(s) when using random wallpapers from a directory.
 
     #+begin_src emacs-lisp
-      (defvar wallpaper--cycle-current nil
+      (defvar wallpaper--current nil
         "List of the wallpaper(s) currently in use.
 
       This variable is set automatically by `wallpaper-set-wallpaper'.  Hand
@@ -535,6 +580,10 @@ If you are cycling through your wallpapers automatically and want to make wallpa
 
 * Cycling wallpapers automatically
 
+  #+begin_src emacs-lisp :exports none
+    
+  #+end_src
+
   Maybe, like me, even having a unique wallpaper on each monitor isn't enough.
   You may want to cycle through your wallpapers and just sit idly all day
   watching the hundreds of wallpapers you have stored move by. In light of this
@@ -554,13 +603,17 @@ If you are cycling through your wallpapers automatically and want to make wallpa
       (wallpaper--toggle-cycle))
 
     (defun wallpaper--toggle-cycle ()
-      "Stop all existent `wallpaper-set-wallpaper' timers and start a new one if `wallpaper-cycle-mode' is non-nil."
+      "Stop or start a `wallpaper-set-wallpaper' timer."
       (cancel-function-timers 'wallpaper-set-wallpaper)
       (when wallpaper-cycle-mode
         (run-with-timer 0 wallpaper-cycle-interval 'wallpaper-set-wallpaper)))
   #+end_src
 
 * Per-workspace wallpapers
+
+  #+begin_src emacs-lisp :exports none
+    
+  #+end_src
 
   An idea someone gave me is setting a wallpaper per workspace. This is the
   product of that work. Enabling ~wallpaper-per-workspace-mode~ will attempt to
@@ -585,9 +638,12 @@ If you are cycling through your wallpapers automatically and want to make wallpa
           (add-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)
         (remove-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)))
   #+end_src
+
 * End :noexport:
 
   #+begin_src emacs-lisp
+    
+
     (provide 'wallpaper)
 
     ;;; wallpaper.el ends here
