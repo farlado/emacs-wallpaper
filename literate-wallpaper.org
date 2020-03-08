@@ -680,35 +680,6 @@
     ;;; Code:
   #+end_src
 
-** Dummy ~feh~ command
-   :properties:
-   :header-args: :tangle "test/feh"
-   :end:
-
-   This is a basic placeholder so that we don't trigger a warning when loading the
-   package in a batch environment.
-
-   #+begin_src sh
-     #!/bin/sh
-
-     echo $0 $@
-   #+end_src
-
-** Set =PATH= for ~feh~ dummy
-
-   This prevents a warning when loading the package in a testing environment
-   which may not have a proper graphical environment attached to it, much less
-   an executable named ~feh~ within =PATH=.
-
-   #+begin_src emacs-lisp
-     (setenv "PATH"
-             (concat
-              (getenv "PATH") ":"
-              (expand-file-name
-               "test" (locate-dominating-file
-                       default-directory ".git"))))
-   #+end_src
-
 ** Load required files
 
    So far, this is a work in progress, so very little has to be loaded.

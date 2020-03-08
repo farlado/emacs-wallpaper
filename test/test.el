@@ -2,13 +2,6 @@
 
 ;;; Code:
 
-(setenv "PATH"
-        (concat
-         (getenv "PATH") ":"
-         (expand-file-name
-          "test" (locate-dominating-file
-                  default-directory ".git"))))
-
 (require 'cl-lib)
 (require 'wallpaper)
 (require 'ert)
