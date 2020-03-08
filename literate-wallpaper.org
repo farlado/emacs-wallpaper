@@ -18,7 +18,6 @@
 - [[#setting-the-wallpaper-once][Setting the wallpaper once]]
   - [[#arguments-for-feh-command][Arguments for ~feh~ command]]
   - [[#per-workspace-wallpapers-1][Per-workspace wallpaper(s)]]
-  - [[#static-wallpapers-1][Static wallpaper(s)]]
   - [[#random-wallpapers][Random wallpaper(s)]]
 - [[#cycling-wallpapers-automatically][Cycling wallpapers automatically]]
 - [[#per-workspace-wallpapers-2][Per-workspace wallpapers]]
@@ -31,9 +30,8 @@
   easier, by managing your wallpapers for you. Compatibility is only guaranteed
   in X desktop sessions. Using this package with EXWM is the intention, but it
   can serve as a wallpaper daemon on other window managers with some work.
-
-  This package was written using literate programming, so code is included
-  alongside the documentation.
+  This package was written literately, so code is included alongside the
+  documentation.
 
   #+begin_src emacs-lisp :noweb yes
     ;;; wallpaper.el --- Setting the wallpaper -*- lexical-binding: t -*-
@@ -110,10 +108,10 @@
        :load-path "lisp/wallpaper"
        :hook ((exwm-randr-screen-change . wallpaper-set-wallpaper)
               (after-init . wallpaper-cycle-mode))
-       :custom ((wallpaper-single t)
+       :custom ((wallpaper-cycle-single t)
                 (wallpaper-scaling 'scale)
                 (wallpaper-cycle-interval 45)
-                (wallpaper-directory "~/Pictures/wallpapers")))
+                (wallpaper-cycle-directory "~/Pictures/wallpapers")))
    #+end_src
 
    However, no amount of hand-holding can ensure you have the dependency ~feh~
@@ -158,31 +156,32 @@
 *** Choosing wallpapers for workspaces
 
     If you wish to have a unique wallpaper or set of wallpapers for each
-    workspace, assign one or multiple wallpapers as absolute paths in a string
-    to a workspace using the variable =wallpaper-per-workspace-alist=. A blank
-    string or nil on a workspace means deferring either to static wallpaper(s)
-    or a random wallpaper if =wallpaper-static-wallpapers= is blank.
+    workspace, assign one or multiple wallpapers as absolute paths in strings
+    to a workspace using the variable =wallpaper-per-workspace-alist=. No values
+    assigned to a workspace means deferring either to static wallpaper(s) or a
+    random wallpaper if =wallpaper-static-wallpapers= is blank.
 
     #+begin_src emacs-lisp
       (defcustom wallpaper-per-workspace-alist nil
         "List of wallpapers per workspace.
 
-      Each item is (WORKSPACE . WALLPAPERS).  When WORKSPACE is the current
-      workspace, WALLPAPERS are the wallpapers to be set."
+      Each item is (WORKSPACE WALLPAPERS).  When WORKSPACE is the current
+      workspace, WALLPAPERS are any number of absolute paths for the
+      wallpapers to be set as from their absolute path."
         :tag "Per-workspace alist"
         :group 'wallpaper
-        :type '(alist :key-type (number :tag "Workspace")
-                      :value-type (string :tag "Wallpaper(s)")))
+        :type 'list)
     #+end_src
 
     An example may look as follows:
 
     #+begin_src emacs-lisp :tangle no
       ;; This is an example, not tangled into wallpaper.el
-      (setq wallpaper-per-workspace-alist '((0 . "/path/to/0.png")
-                                            (1 . "/path/to/1.png")
-                                            (2 . nil)
-                                            (3 . "/so/on/so/forth/2.png")
+      (setq wallpaper-per-workspace-alist '((0 "/path/to/0.png")
+                                            (1 "/path/to/1.png"
+                                               "/path/to/3.png")
+                                            (2)
+                                            (3 "/so/on/so/forth/2.png")
                                             ...))
     #+end_src
 
@@ -213,20 +212,20 @@
    #+end_src
 
    If you only want to use a certain wallpaper or set of wallpapers across
-   monitors, set =wallpaper-static-wallpapers= to a string containing multiple
-   absolute paths to the desired wallpapers, in the order of the monitors they
-   should be on.
+   monitors, set =wallpaper-static-wallpaper-list= to a list of strings for
+   multiple absolute paths to the desired wallpapers, in the order of the
+   monitors they should be on.
 
    #+begin_src emacs-lisp
-     (defcustom wallpaper-static-wallpapers ""
+     (defcustom wallpaper-static-wallpaper-list nil
        "List of wallpapers to use instead of randomly finding wallpapers.
 
      Wallpapers must be entered in this list as absolute paths, in the order
-     of your monitors.  This string should be left blank if you intend to use
+     of your monitors.  This list should be left blank if you intend to use
      function `wallpaper-cycle-mode'."
        :tag "Static wallpaper(s)"
        :group 'wallpaper
-       :type 'string)
+       :type 'list)
    #+end_src
 
    For instance, if I wanted =1.png= on my first monitor, =3.png= on my second
@@ -235,7 +234,9 @@
 
    #+begin_src emacs-lisp :tangle no
      ;; This is an example, not tangled into wallpaper.el
-     (setq wallpaper-static-wallpapers "1.png 3.png 2.png")
+     (setq wallpaper-static-wallpapers '("/path/to/1.png"
+                                         "/path/to/3.png"
+                                         "/path/to/2.png"))
    #+end_src
 
 ** Cycling wallpapers
@@ -262,10 +263,10 @@
 *** Setting multiple wallpapers
 
     If you are wanting to use the same wallpaper on each monitor when cycling
-    wallpapers, set =wallpaper-single= to non-nil.
+    wallpapers, set =wallpaper-cycle-single= to non-nil.
 
     #+begin_src emacs-lisp
-      (defcustom wallpaper-single nil
+      (defcustom wallpaper-cycle-single nil
         "Whether to use one wallpaper across all monitors.
 
       This setting is not respected when `wallpaper-static-wallpapers' is
@@ -281,10 +282,10 @@
     By default, wallpapers are searched for in =~/.config/wallpapers= when
     cycling wallpapers, but of course not everyone may want to store their
     wallpapers there, in which case you'll have to set the variable
-    =wallpaper-directory= to where your wallpapers are stored.
+    =wallpaper-cycle-directory= to where your wallpapers are stored.
 
     #+begin_src emacs-lisp
-      (defcustom wallpaper-directory (expand-file-name "~/.config/wallpapers")
+      (defcustom wallpaper-cycle-directory (expand-file-name "~/.config/wallpapers")
         "The directory in which to look for wallpapers."
         :tag "Wallpaper directory"
         :group 'wallpaper
@@ -345,14 +346,19 @@
 
 * Setting the wallpaper once
 
-  #+begin_src emacs-lisp :exports none
+  #+begin_src emacs-lisp :noweb yes :exports none
     
+
+    <<current>>
   #+end_src
 
   The function ~wallpaper-set-wallpaper~ can be used to set the wallpaper one
-  time. If =wallpaper-static-wallpapers= is not set, it will randomly choose
-  a PNG or JPG image found in =wallpaper-directory=. This function can be called
-  interactively was well as in your configurations.
+  time. If ~wallpaper-per-workspace-mode~ is active, it will set the wallpaper
+  according to the current workspace and the wallpapers assigned to it in
+  =wallpaper-per-workspace-alist=, otherwise it will try to use the wallpaper(s)
+  in =wallpaper-static-wallpapers=. If =wallpaper-static-wallpapers= is blank, it
+  will randomly choose a PNG or JPG image found in =wallpaper-cycle-directory=.
+  This function can be called interactively was well as in your configurations.
 
   If you are using this package with EXWM, I would highly recommend you add
   ~wallpaper-set-wallpaper~ to =exwm-randr-screen-change-hook= or add the command
@@ -372,17 +378,31 @@
       "Set the wallpaper.
 
     This function will either choose a random wallpaper from
-    `wallpaper-directory' or use the wallpapers listed in
+    `wallpaper-cycle-directory' or use the wallpapers listed in
     `wallpaper-static-wallpapers'."
       (interactive)
       (let ((wallpapers (or (wallpaper--per-workspace-wallpapers)
-                            (wallpaper--static-wallpapers)
+                            wallpaper-static-wallpaper-list
                             (wallpaper--random-wallpapers)))
             (command (concat "feh --no-fehbg " (wallpaper--background))))
+        (setq wallpaper-current-wallpapers nil)
         (dolist (wallpaper wallpapers)
-          (setq command (concat command (wallpaper--scaling) wallpaper " ")))
+          (setq command (concat command (wallpaper--scaling) wallpaper " "))
+          (add-to-list 'wallpaper-current-wallpapers wallpaper))
         (start-process-shell-command
          "Wallpaper" nil command)))
+  #+end_src
+
+  A variable =wallpaper-current-wallpapers= keeps track of the wallpaper(s)
+  currently in use regardless of how they were set.
+
+  #+name: current
+  #+begin_src emacs-lisp :tangle no
+      (defvar wallpaper-current-wallpapers nil
+        "List of the wallpaper(s) currently in use.
+
+      This variable is set automatically.  Hand modification of its value
+      may interfere with its proper behavior.")
   #+end_src
 
 ** Arguments for ~feh~ command
@@ -437,7 +457,8 @@
      <<vdesk>>
    #+end_src
 
-   This one seemed simple at first but got really dumb.
+   This one seemed simple at first but got really dumb and then was made much
+   simpler after a little bit more careful consideration.
 
    #+name: per-workspace-wallpapers
    #+begin_src emacs-lisp
@@ -446,9 +467,8 @@
 
      Returns nil if variable `wallpaper-per-workspace-mode' is nil."
        (when wallpaper-per-workspace-mode
-         (split-string (or (cdr (assq (funcall wallpaper-per-workspace-get)
-                                      wallpaper-per-workspace-alist))
-                           ""))))
+         (cdr (assq (funcall wallpaper-per-workspace-get)
+                    wallpaper-per-workspace-alist))))
    #+end_src
 
 *** Getting the current workspace in EXWM
@@ -495,20 +515,6 @@
           (display-warning 'wallpaper "vdesk is not installed!")))
     #+end_src
 
-** Static wallpaper(s)
-
-   #+begin_src emacs-lisp :exports none
-     
-   #+end_src
-
-   Plain dead simple.
-
-   #+begin_src emacs-lisp
-     (defun wallpaper--static-wallpapers ()
-       "Return `wallpaper-static-wallpapers' as a split string."
-       (split-string wallpaper-static-wallpapers))
-   #+end_src
-
 ** Random wallpaper(s)
    :properties:
    :header-args: :tangle no
@@ -516,8 +522,6 @@
 
    #+name: cycle-funcs
    #+begin_src emacs-lisp :noweb yes :exports none
-     <<current>>
-
      <<random-wallpapers>>
 
      <<wallpapers>>
@@ -526,7 +530,7 @@
    #+end_src
 
    The overall process has two over-arching steps. First, a list is gathered of
-   all available wallpapers in =wallpaper-directory=. Then, the wallpapers
+   all available wallpapers in =wallpaper-cycle-directory=. Then, the wallpapers
    currently in use are removed from that list. During this step, the list of
    wallpapers currently in use is also cleared. Then, for each monitor that can
    be detected as active by ~xrandr~, a random wallpaper with the proper style
@@ -537,59 +541,41 @@
      (defun wallpaper--random-wallpapers ()
        "Return a string of random wallpapers for each monitor.
 
-     If `wallpaper-single' is non-nil, only one wallpaper is returned."
-       (let* ((available (wallpaper--update-available))
+     If `wallpaper-cycle-single' is non-nil, only one wallpaper is returned."
+       (let* ((available (wallpaper--get-available))
               (num-available (length available))
-              (num-monitors (if wallpaper-single 1 (wallpaper--num-monitors)))
-              (wallpapers ""))
-         ;; Add as many wallpapers to the string as there are monitors
-         ;; Add the wallpapers used to `wallpaper--current'
+              (num-monitors (if wallpaper-cycle-single 1 (wallpaper--num-monitors)))
+              (wallpapers nil))
          (dotimes (_ num-monitors)
            (let ((wallpaper (nth (random num-available) available)))
-             (setq wallpapers (concat wallpapers wallpaper " ")
-                   available (delq wallpaper available))
-             (add-to-list 'wallpaper--current wallpaper)))
-         ;; Return the string of wallpapers split
-         (split-string wallpapers)))
+             (cl-pushnew wallpaper wallpapers)
+             (setq available (delq wallpaper available))))
+         wallpapers))
    #+end_src
-
-    A variable =wallpaper--current= keeps track of the current
-    wallpaper(s) when using random wallpapers from a directory.
-
-    #+name: current
-    #+begin_src emacs-lisp
-      (defvar wallpaper--current nil
-        "List of the wallpaper(s) currently in use.
-
-      This variable is set automatically.  Hand modification of its value
-      may interfere with its proper behavior.")
-    #+end_src
 
 *** Getting possible wallpapers
 
     Every file with the extension =png= or =jpg= (case-insensitive) inside of
-    =wallpaper-directory= or its sub-directories is listed by the command
+    =wallpaper-cycle-directory= or its sub-directories is listed by the command
     ~wallpaper--wallpapers~, and ~wallpaper--update-available~ clears
-    =wallpaper--current= and returns a list of all wallpapers except those which
-    were in =wallpaper--current=.
+    =wallpaper-current-wallpapers= and returns a list of all wallpapers except those which
+    were in =wallpaper-current-wallpapers=.
 
     #+name: wallpapers
     #+begin_src emacs-lisp
       (defun wallpaper--wallpapers ()
-        "Return a list of images found in `wallpaper-directory'."
-        (directory-files-recursively wallpaper-directory
+        "Return a list of images found in `wallpaper-cycle-directory'."
+        (directory-files-recursively wallpaper-cycle-directory
                                      ".[jpJP][engENG]+$"
                                      nil))
 
-      (defun wallpaper--update-available ()
+      (defun wallpaper--get-available ()
         "Return `wallpaper--wallpapers' with modification.
 
-      This function removes the values in the list `wallpaper--current' from
-      its return value and clears the list as well."
-        (let ((wallpapers (wallpaper--wallpapers))
-              (current-wallpapers wallpaper--current))
-          (setq wallpaper--current nil)
-          (dolist (wallpaper current-wallpapers)
+      This function removes items from `wallpaper-current-wallpapers' from
+      the resultant list."
+        (let ((wallpapers (wallpaper--wallpapers)))
+          (dolist (wallpaper wallpaper-current-wallpapers)
             (setq wallpapers (delq wallpaper wallpapers)))
           wallpapers))
     #+end_src
@@ -670,13 +656,159 @@
     (defun wallpaper--toggle-per-workspace ()
       "Add or remove setting the wallpaper to `exwm-workspace-switch-hook'."
       (if wallpaper-per-workspace-mode
-          (add-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)
+          (progn
+            (add-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)
+            (wallpaper-set-wallpaper))
         (remove-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)))
   #+end_src
 
   #+begin_src emacs-lisp :exports none :noweb yes
     <<per-workspace-funcs>>
   #+end_src
+
+* Testing :noexport:
+  :properties:
+  :header-args: :tangle "test/test.el"
+  :end:
+
+  These are specifically notes pertaining to testing this package, and are not
+  really useful for anyone who isn't directly working on it.
+
+  #+begin_src emacs-lisp
+    ;;; -*- lexical-binding: t -*-
+
+    ;;; Code:
+  #+end_src
+
+** Dummy ~feh~ command
+   :properties:
+   :header-args: :tangle "test/feh"
+   :end:
+
+   This is a basic placeholder so that we don't trigger a warning when loading the
+   package in a batch environment.
+
+   #+begin_src sh
+     #!/bin/sh
+
+     echo $0 $@
+   #+end_src
+
+** Set =PATH= for ~feh~ dummy
+
+   This prevents a warning when loading the package in a testing environment
+   which may not have a proper graphical environment attached to it, much less
+   an executable named ~feh~ within =PATH=.
+
+   #+begin_src emacs-lisp
+     (setenv "PATH"
+             (concat
+              (getenv "PATH") ":"
+              (expand-file-name
+               "test" (locate-dominating-file
+                       default-directory ".git"))))
+   #+end_src
+
+** Load required files
+
+   So far, this is a work in progress, so very little has to be loaded.
+
+   #+begin_src emacs-lisp
+     (require 'cl-lib)
+     (require 'wallpaper)
+     (require 'ert)
+   #+end_src
+
+** Testing static wallpapers
+
+   When setting the wallpaper using =wallpaper-static-wallpaper-list=, there is no
+   change in =wallpaper-current-wallpapers= between points when the wallpaper is
+   set. If there is a difference, there is a problem.
+
+   #+begin_src emacs-lisp
+     (defun wallpaper-test--static ()
+       "Test whether using a static wallpaper list is working."
+       (wallpaper-per-workspace-mode -1)
+       (wallpaper-cycle-mode -1)
+       (setq wallpaper-static-wallpaper-list '("foo"
+                                               "bar"))
+       (wallpaper-set-wallpaper)
+       (not (equal wallpaper-static-wallpaper-list
+                   wallpaper-current-wallpapers)))
+
+     (ert-deftest wallpaper-test-static ()
+       (should (wallpaper-test--static)))
+   #+end_src
+
+** Testing cycling wallpapers
+
+   This is another simple one: when =wallpaper-cycle-mode= is active, different
+   wallpapers should be in =wallpaper-current-wallpapers= after each passing of
+   =wallpaper-cycle-interval=. Because we can't expect there to be a proper X
+   session while testing, =wallpaper-cycle-single= must be =t=.
+
+   #+begin_src emacs-lisp
+     (defun wallpaper-test--cycle ()
+       "Test whether `wallpaper-cycle-mode' is setting wallpapers properly."
+       (wallpaper-per-workspace-mode -1)
+       (setq wallpaper-static-wallpaper-list nil
+             wallpaper-cycle-directory (expand-file-name
+                                        "test/img" (locate-dominating-file
+                                                    default-directory ".git"))
+             wallpaper-cycle-interval 4
+             wallpaper-cycle-single t)
+       (wallpaper-cycle-mode 1)
+       (let ((previous-wallpapers wallpaper-current-wallpapers))
+         (sleep-for 6)
+         (not (equal wallpaper-current-wallpapers previous-wallpapers))))
+
+     (ert-deftest wallpaper-test-cycle ()
+       (should (wallpaper-test--cycle)))
+   #+end_src
+
+** Testing per-workspace wallpapers
+
+   This one was tricky to work with. The way to test it is really weird. I can
+   attest to it working on EXWM and vdesk. Past that you're on your own. This is a number
+   of different tests crammed into one. First, we make sure that setting the wallpaper
+   does in fact set the wallpaper to what ~wallpaper--per-workspace-wallpapers~ returns,
+   and then we make sure changing the workspace changes the assigned wallpapers
+   accordingly. If any extraneous wallpapers are in =wallpaper-current-wallpapers=, the
+   dummy workspace indicator is set to a different value and the test fails.
+
+   #+begin_src emacs-lisp
+     (defvar wallpaper-test--current-workspace 0
+       "Dummy variable for simulating workspace changes.")
+
+     (defun wallpaper-test--workspace-set (n)
+       "Set `wallpaper-test--current-workspace' to N."
+       (setq wallpaper-test--current-workspace n))
+
+     (defun wallpaper-test--workspace-get ()
+       "Return `wallpaper-test--current-workspace'."
+       wallpaper-test--current-workspace)
+
+     (defun wallpaper-test--per-workspace ()
+       "Ensure per-workspace wallpaper setting is working."
+       (wallpaper-cycle-mode -1)
+       (setq wallpaper-per-workspace-get #'wallpaper-test--workspace-get
+             wallpaper-per-workspace-alist '((0 "foo")
+                                             (1 "bar"
+                                                "baz")))
+       (wallpaper-per-workspace-mode 1)
+       (when (equal (wallpaper--per-workspace-wallpapers)
+                    wallpaper-current-wallpapers)
+         (setq wallpaper-test--current-workspace 1)
+         (wallpaper-set-wallpaper)
+         (dolist (wallpaper wallpaper-current-wallpapers)
+           (unless (or (equal wallpaper "bar")
+                       (equal wallpaper "bar"))
+             wallpaper-test--current-workspace 2)))
+       (= wallpaper-test--current-workspace 1))
+
+     (ert-deftest wallpaper-test-per-workspace ()
+       (should (wallpaper-test--per-workspace)))
+   #+end_src
 
 * End :noexport:
 

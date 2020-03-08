@@ -67,12 +67,12 @@
 (defcustom wallpaper-per-workspace-alist nil
   "List of wallpapers per workspace.
 
-Each item is (WORKSPACE . WALLPAPERS).  When WORKSPACE is the current
-workspace, WALLPAPERS are the wallpapers to be set."
+Each item is (WORKSPACE WALLPAPERS).  When WORKSPACE is the current
+workspace, WALLPAPERS are any number of absolute paths for the
+wallpapers to be set as from their absolute path."
   :tag "Per-workspace alist"
   :group 'wallpaper
-  :type '(alist :key-type (number :tag "Workspace")
-                :value-type (string :tag "Wallpaper(s)")))
+  :type 'list)
 
 (defcustom wallpaper-per-workspace-get #'wallpaper-per-workspace-exwm-get
   "What function to use for determining the current workspace."
@@ -82,15 +82,15 @@ workspace, WALLPAPERS are the wallpapers to be set."
 
 
 
-(defcustom wallpaper-static-wallpapers ""
+(defcustom wallpaper-static-wallpaper-list nil
   "List of wallpapers to use instead of randomly finding wallpapers.
 
 Wallpapers must be entered in this list as absolute paths, in the order
-of your monitors.  This string should be left blank if you intend to use
+of your monitors.  This list should be left blank if you intend to use
 function `wallpaper-cycle-mode'."
   :tag "Static wallpaper(s)"
   :group 'wallpaper
-  :type 'string)
+  :type 'list)
 
 
 
@@ -100,7 +100,7 @@ function `wallpaper-cycle-mode'."
   :group 'wallpaper
   :type 'integer)
 
-(defcustom wallpaper-single nil
+(defcustom wallpaper-cycle-single nil
   "Whether to use one wallpaper across all monitors.
 
 This setting is not respected when `wallpaper-static-wallpapers' is
@@ -110,7 +110,7 @@ one path is listed in `wallpaper-static-wallpapers'."
   :group 'wallpaper
   :type 'boolean)
 
-(defcustom wallpaper-directory (expand-file-name "~/.config/wallpapers")
+(defcustom wallpaper-cycle-directory (expand-file-name "~/.config/wallpapers")
   "The directory in which to look for wallpapers."
   :tag "Wallpaper directory"
   :group 'wallpaper
@@ -145,20 +145,28 @@ The default option is fill."
 
 
 
+(defvar wallpaper-current-wallpapers nil
+  "List of the wallpaper(s) currently in use.
+
+This variable is set automatically.  Hand modification of its value
+may interfere with its proper behavior.")
+
 ;;;###autoload
 (defun wallpaper-set-wallpaper ()
   "Set the wallpaper.
 
 This function will either choose a random wallpaper from
-`wallpaper-directory' or use the wallpapers listed in
+`wallpaper-cycle-directory' or use the wallpapers listed in
 `wallpaper-static-wallpapers'."
   (interactive)
   (let ((wallpapers (or (wallpaper--per-workspace-wallpapers)
-                        (wallpaper--static-wallpapers)
+                        wallpaper-static-wallpaper-list
                         (wallpaper--random-wallpapers)))
         (command (concat "feh --no-fehbg " (wallpaper--background))))
+    (setq wallpaper-current-wallpapers nil)
     (dolist (wallpaper wallpapers)
-      (setq command (concat command (wallpaper--scaling) wallpaper " ")))
+      (setq command (concat command (wallpaper--scaling) wallpaper " "))
+      (add-to-list 'wallpaper-current-wallpapers wallpaper))
     (start-process-shell-command
      "Wallpaper" nil command)))
 
@@ -176,12 +184,6 @@ This function will either choose a random wallpaper from
 (defun wallpaper--background ()
   "Return the background color to use as an argument for feh."
   (concat "--image-bg '" wallpaper-background "' "))
-
-
-
-(defun wallpaper--static-wallpapers ()
-  "Return `wallpaper-static-wallpapers' as a split string."
-  (split-string wallpaper-static-wallpapers))
 
 
 
@@ -203,45 +205,33 @@ at the interval defined by `wallpaper-cycle-interval'.  See function
   (when wallpaper-cycle-mode
     (run-with-timer 0 wallpaper-cycle-interval 'wallpaper-set-wallpaper)))
 
-(defvar wallpaper--current nil
-  "List of the wallpaper(s) currently in use.
-
-This variable is set automatically.  Hand modification of its value
-may interfere with its proper behavior.")
-
 (defun wallpaper--random-wallpapers ()
   "Return a string of random wallpapers for each monitor.
 
-If `wallpaper-single' is non-nil, only one wallpaper is returned."
-  (let* ((available (wallpaper--update-available))
+If `wallpaper-cycle-single' is non-nil, only one wallpaper is returned."
+  (let* ((available (wallpaper--get-available))
          (num-available (length available))
-         (num-monitors (if wallpaper-single 1 (wallpaper--num-monitors)))
-         (wallpapers ""))
-    ;; Add as many wallpapers to the string as there are monitors
-    ;; Add the wallpapers used to `wallpaper--current'
+         (num-monitors (if wallpaper-cycle-single 1 (wallpaper--num-monitors)))
+         (wallpapers nil))
     (dotimes (_ num-monitors)
       (let ((wallpaper (nth (random num-available) available)))
-        (setq wallpapers (concat wallpapers wallpaper " ")
-              available (delq wallpaper available))
-        (add-to-list 'wallpaper--current wallpaper)))
-    ;; Return the string of wallpapers split
-    (split-string wallpapers)))
+        (cl-pushnew wallpaper wallpapers)
+        (setq available (delq wallpaper available))))
+    wallpapers))
 
 (defun wallpaper--wallpapers ()
-  "Return a list of images found in `wallpaper-directory'."
-  (directory-files-recursively wallpaper-directory
+  "Return a list of images found in `wallpaper-cycle-directory'."
+  (directory-files-recursively wallpaper-cycle-directory
                                ".[jpJP][engENG]+$"
                                nil))
 
-(defun wallpaper--update-available ()
+(defun wallpaper--get-available ()
   "Return `wallpaper--wallpapers' with modification.
 
-This function removes the values in the list `wallpaper--current' from
-its return value and clears the list as well."
-  (let ((wallpapers (wallpaper--wallpapers))
-        (current-wallpapers wallpaper--current))
-    (setq wallpaper--current nil)
-    (dolist (wallpaper current-wallpapers)
+This function removes items from `wallpaper-current-wallpapers' from
+the resultant list."
+  (let ((wallpapers (wallpaper--wallpapers)))
+    (dolist (wallpaper wallpaper-current-wallpapers)
       (setq wallpapers (delq wallpaper wallpapers)))
     wallpapers))
 
@@ -266,7 +256,9 @@ See `wallpaper-per-workspace-alist' and `wallpaper-per-workspace-get'."
 (defun wallpaper--toggle-per-workspace ()
   "Add or remove setting the wallpaper to `exwm-workspace-switch-hook'."
   (if wallpaper-per-workspace-mode
-      (add-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)
+      (progn
+        (add-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)
+        (wallpaper-set-wallpaper))
     (remove-hook 'exwm-workspace-switch-hook #'wallpaper-set-wallpaper)))
 
 (defun wallpaper--per-workspace-wallpapers ()
@@ -274,9 +266,8 @@ See `wallpaper-per-workspace-alist' and `wallpaper-per-workspace-get'."
 
 Returns nil if variable `wallpaper-per-workspace-mode' is nil."
   (when wallpaper-per-workspace-mode
-    (split-string (or (cdr (assq (funcall wallpaper-per-workspace-get)
-                                 wallpaper-per-workspace-alist))
-                      ""))))
+    (cdr (assq (funcall wallpaper-per-workspace-get)
+               wallpaper-per-workspace-alist))))
 
 (defun wallpaper-per-workspace-exwm-get ()
   "Return the current EXWM workspace."
