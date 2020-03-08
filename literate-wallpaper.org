@@ -5,6 +5,8 @@
 #+property: header-args :tangle "wallpaper.el"
 #+export_exclude_tags: noexport
 
+[[file:https://github.com/farlado/emacs-wallpaper/workflows/CI/badge.svg]]
+
 * Table of contents :toc:quote:
 #+BEGIN_QUOTE
 - [[#about-this-package][About this Package]]
