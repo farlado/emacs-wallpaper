@@ -5,7 +5,7 @@
 ;; Author: Farlado <farlado@sdf.org>
 ;; URL: https://github.com/farlado/emacs-wallpaper
 ;; Keywords: unix, wallpaper, extensions
-;; Package-Version: 1.1.2
+;; Version: 1.1.3
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; This file is not part of GNU Emacs.
@@ -50,7 +50,7 @@
 ;;; Code:
 
 (unless (executable-find "feh")
-  (display-warning 'wallpaper "Could not find feh, is it installed?"))
+  (display-warning 'wallpaper "External command `feh' not found!"))
 
 (require 'cl-lib)
 
@@ -273,22 +273,24 @@ Returns nil if variable `wallpaper-per-workspace-mode' is nil."
   "Return the current EXWM workspace."
   (if (boundp 'exwm-workspace-current-index)
       exwm-workspace-current-index
-    (display-warning 'wallpaper "Cannot get current EXWM workspace!")))
+    (error "Cannot get current EXWM workspace!")))
 
 (defun wallpaper-per-workspace-i3-get ()
   "Get the current i3 workspace."
   (if (= (shell-command "pgrep i3") 0)
-      (string-to-number
-       (shell-command-to-string
-        (concat "i3-msg -t get_workspaces | "
-                "jq -r '.[] | select(.focused==true).name'")))
-    (display-warning 'wallpaper "Cannot get current i3 workspace!")))
+      (if (executable-find "jq")
+          (string-to-number
+           (shell-command-to-string
+            (concat "i3-msg -t get_workspaces | "
+                    "jq -r '.[] | select(.focused==true).name'")))
+        (error "External command `jq' is missing!"))
+    (error "Window manager `i3' is not in use!")))
 
 (defun wallpaper-per-workspace-vdesk-get ()
   "Get the current vdesk."
   (if (executable-find "vdesk")
       (string-to-number (shell-command-to-string "vdesk"))
-    (display-warning 'wallpaper "vdesk is not installed!")))
+    (error "External command `vdesk' is missing!")))
 
 
 
