@@ -116,6 +116,12 @@ one path is listed in `wallpaper-static-wallpapers'."
   :group 'wallpaper
   :type 'string)
 
+(defcustom wallpaper-cycle-extension-regexp ".[gjpGJP][inpINP][efgEFG]+$"
+  "The regexp used to locate wallpapers in `wallpaper-cycle-directory'."
+        :tag "Wallpaper extension regexp"
+        :group 'wallpaper
+        :type 'string)
+
 
 
 (defcustom wallpaper-scaling 'fill
@@ -222,7 +228,7 @@ If `wallpaper-cycle-single' is non-nil, only one wallpaper is returned."
 (defun wallpaper--wallpapers ()
   "Return a list of images found in `wallpaper-cycle-directory'."
   (directory-files-recursively wallpaper-cycle-directory
-                               ".[jpJP][engENG]+$"
+                               wallpaper-cycle-extension-regexp
                                nil))
 
 (defun wallpaper--get-available ()

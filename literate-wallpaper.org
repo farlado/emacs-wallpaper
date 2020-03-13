@@ -294,6 +294,19 @@
         :type 'string)
     #+end_src
 
+*** Using specific file extensions
+
+    When cycling, random wallpapers will be grabbed from a directory. This
+    regexp is used to pick which files within a directory are wallpapers.
+
+    #+begin_src emacs-lisp
+      (defcustom wallpaper-cycle-extension-regexp ".[gjpGJP][inpINP][efgEFG]+$"
+        "The regexp used to locate wallpapers in `wallpaper-cycle-directory'."
+              :tag "Wallpaper extension regexp"
+              :group 'wallpaper
+              :type 'string)
+    #+end_src
+
 ** Wallpaper style
 
    #+begin_src emacs-lisp :exports none
@@ -570,7 +583,7 @@
       (defun wallpaper--wallpapers ()
         "Return a list of images found in `wallpaper-cycle-directory'."
         (directory-files-recursively wallpaper-cycle-directory
-                                     ".[jpJP][engENG]+$"
+                                     wallpaper-cycle-extension-regexp
                                      nil))
 
       (defun wallpaper--get-available ()
