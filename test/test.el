@@ -36,6 +36,24 @@
 (ert-deftest wallpaper-test-cycle ()
   (should (wallpaper-test--cycle)))
 
+(defun wallpaper-test--regexp ()
+  "Test whether using a static wallpaper list is working."
+  (let* ((wallpaper-cycle-directory (expand-file-name
+                                     "test/img" (locate-dominating-file
+                                                 default-directory ".git")))
+         (wallpapers (wallpaper--wallpapers))
+         (expected-1 (expand-file-name "1.png" wallpaper-cycle-directory))
+         (expected-2 (expand-file-name "2.jpg" wallpaper-cycle-directory))
+         (expected-3 (expand-file-name "3.gif" wallpaper-cycle-directory))
+         (expected-4 (expand-file-name "4.jpeg" wallpaper-cycle-directory)))
+    (and (member expected-1 wallpapers)
+         (member expected-2 wallpapers)
+         (member expected-3 wallpapers)
+         (member expected-4 wallpapers))))
+
+(ert-deftest wallpaper-test-regexp ()
+  (should (wallpaper-test--regexp)))
+
 (defvar wallpaper-test--current-workspace 0
   "Dummy variable for simulating workspace changes.")
 

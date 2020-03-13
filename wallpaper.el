@@ -118,9 +118,9 @@ one path is listed in `wallpaper-static-wallpapers'."
 
 (defcustom wallpaper-cycle-extension-regexp ".[gjpGJP][inpINP][efgEFG]+$"
   "The regexp used to locate wallpapers in `wallpaper-cycle-directory'."
-        :tag "Wallpaper extension regexp"
-        :group 'wallpaper
-        :type 'string)
+  :tag "Wallpaper extension regexp"
+  :group 'wallpaper
+  :type 'string)
 
 
 

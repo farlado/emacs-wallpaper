@@ -302,9 +302,9 @@
     #+begin_src emacs-lisp
       (defcustom wallpaper-cycle-extension-regexp ".[gjpGJP][inpINP][efgEFG]+$"
         "The regexp used to locate wallpapers in `wallpaper-cycle-directory'."
-              :tag "Wallpaper extension regexp"
-              :group 'wallpaper
-              :type 'string)
+        :tag "Wallpaper extension regexp"
+        :group 'wallpaper
+        :type 'string)
     #+end_src
 
 ** Wallpaper style
@@ -752,6 +752,31 @@
 
      (ert-deftest wallpaper-test-cycle ()
        (should (wallpaper-test--cycle)))
+   #+end_src
+
+** Testing image extension regexp
+
+   This test ensures the regexp in use can find files of every extension that
+   are known to work with ~feh~.
+
+   #+begin_src emacs-lisp
+     (defun wallpaper-test--regexp ()
+       "Test whether using a static wallpaper list is working."
+       (let* ((wallpaper-cycle-directory (expand-file-name
+                                          "test/img" (locate-dominating-file
+                                                      default-directory ".git")))
+              (wallpapers (wallpaper--wallpapers))
+              (expected-1 (expand-file-name "1.png" wallpaper-cycle-directory))
+              (expected-2 (expand-file-name "2.jpg" wallpaper-cycle-directory))
+              (expected-3 (expand-file-name "3.gif" wallpaper-cycle-directory))
+              (expected-4 (expand-file-name "4.jpeg" wallpaper-cycle-directory)))
+         (and (member expected-1 wallpapers)
+              (member expected-2 wallpapers)
+              (member expected-3 wallpapers)
+              (member expected-4 wallpapers))))
+
+     (ert-deftest wallpaper-test-regexp ()
+       (should (wallpaper-test--regexp)))
    #+end_src
 
 ** Testing per-workspace wallpapers
