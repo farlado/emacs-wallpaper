@@ -99,15 +99,14 @@
 
 ** Installation
 
-   It'll be on MELPA [[https://github.com/melpa/melpa/pull/6737][eventually]]. Till then, you're on your own to clone this
-   repository and get it added to your =load-path=. An example configuration
-   using ~use-package~ is included below:
+   This package is available on MELPA. Using ~use-package~, an example
+   configuration may look as follows:
 
    #+begin_src emacs-lisp :tangle no
      ;; This is an example `use-package' configuration
      ;; It is not tangled into wallpaper.el
      (use-package wallpaper
-       :load-path "lisp/wallpaper"
+       :ensure t
        :hook ((exwm-randr-screen-change . wallpaper-set-wallpaper)
               (after-init . wallpaper-cycle-mode))
        :custom ((wallpaper-cycle-single t)
@@ -116,17 +115,15 @@
                 (wallpaper-cycle-directory "~/Pictures/wallpapers")))
    #+end_src
 
-   However, no amount of hand-holding can ensure you have the dependency ~feh~
-   installed, or that you are loading this package while in an X desktop
-   session.
+   Ensure that you have ~feh~ installed before use.
 
    #+begin_src emacs-lisp
      (unless (executable-find "feh")
        (display-warning 'wallpaper "External command `feh' not found!"))
    #+end_src
 
-   This package also depends on ~cl-lib~, and uses functions that are not
-   compatible with versions of Emacs before 25.
+   This package also uses functions that are not compatible with versions of
+   Emacs before 25.
 
    #+begin_src emacs-lisp
      (require 'cl-lib)
