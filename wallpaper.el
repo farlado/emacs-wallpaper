@@ -44,7 +44,6 @@
 ;; - i3
 ;;
 ;; Compatibility is only guaranteed with use of an X desktop session.
-
 
 
 ;;; Code:

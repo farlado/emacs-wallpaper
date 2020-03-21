@@ -5,6 +5,7 @@
 #+property: header-args :tangle "wallpaper.el"
 #+export_exclude_tags: noexport
 
+[[https://melpa.org/#/wallpaper][file:https://melpa.org/packages/wallpaper-badge.svg]]
 [[https://github.com/farlado/emacs-wallpaper/actions?query=workflow:CI][file:https://github.com/farlado/emacs-wallpaper/workflows/CI/badge.svg]]
 
 * Table of contents :toc:quote:
@@ -71,7 +72,6 @@
     ;; - i3
     ;;
     ;; Compatibility is only guaranteed with use of an X desktop session.
-
     
 
     ;;; Code:
