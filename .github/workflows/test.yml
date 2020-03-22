@@ -30,6 +30,8 @@ on:
     # Comment out this section to enable testing of all branches.
     branches:
       - master
+    paths-ignore:
+      - literate-wallpaper.org
 
 jobs:
   build:

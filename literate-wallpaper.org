@@ -172,7 +172,7 @@
         :type 'list)
     #+end_src
 
-    An example may look as follows:
+    An example for EXWM may look as follows:
 
     #+begin_src emacs-lisp :tangle no
       ;; This is an example, not tangled into wallpaper.el
@@ -183,6 +183,8 @@
                                             (3 "/so/on/so/forth/2.png")
                                             ...))
     #+end_src
+
+    If you are using i3, start with 1 instead of 0 for the first workspace.
 
 *** Getting the workspace number
 
@@ -319,7 +321,7 @@
     - =tile=: Tile the image across the screen for small images
     - =center=: Center the image on the screen
 
-    By default, ='fill= is the value of =wallpaper-scaling=.
+    By default, =fill= is the value of =wallpaper-scaling=.
 
     #+begin_src emacs-lisp
       (defcustom wallpaper-scaling 'fill
