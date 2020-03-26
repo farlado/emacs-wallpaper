@@ -31,9 +31,9 @@
 * About this Package
 
   Ricing [[https://github.com/ch11ng/exwm][EXWM]] is pretty cool, but even cooler is being able to manage everything
-  about your rice using Emacs. This package is meant to make that a little bit
-  easier, by managing your wallpapers for you. Compatibility is only guaranteed
-  in X desktop sessions. Using this package with EXWM is the intention, but it
+  about your rice using Emacs.  This package is meant to make that a little bit
+  easier, by managing your wallpapers for you.  Compatibility is only guaranteed
+  in X desktop sessions.  Using this package with EXWM is the intention, but it
   can serve as a wallpaper daemon on other window managers with some work.
   This package was written literately, so code is included alongside the
   documentation.
@@ -101,7 +101,7 @@
 
 ** Installation
 
-   This package is available on MELPA. Using ~use-package~, an example
+   This package is available on MELPA.  Using ~use-package~, an example
    configuration may look as follows:
 
    #+begin_src emacs-lisp :tangle no
@@ -135,9 +135,9 @@
 
    Please make sure when modifying this package you are doing so literately.
    This means modifying =literate-wallpaper.el= and tangling your changes from
-   there. Pull requests which modify =wallpaper.el= without modifying the literate
-   file will most likely *not* be accepted until the changes are also present in
-   =literate-wallpaper.el= with sufficient documentation where needed.
+   there.  Pull requests which modify =wallpaper.el= without modifying the
+   literate file will most likely *not* be accepted until the changes are also
+   present in =literate-wallpaper.el= with sufficient documentation where needed.
 
 * Configuration
 
@@ -145,7 +145,7 @@
     
   #+end_src
 
-  Settings for this package can be configured using ~customize~. This can be done
+  Settings for this package can be configured using ~customize~.  This can be done
   by doing =M-x customize-group RET wallpaper RET=.
 
   #+begin_src emacs-lisp
@@ -166,7 +166,7 @@
 
     If you wish to have a unique wallpaper or set of wallpapers for each
     workspace, assign one or multiple wallpapers as absolute paths in strings
-    to a workspace using the variable =wallpaper-per-workspace-alist=. No values
+    to a workspace using the variable =wallpaper-per-workspace-alist=.  No values
     assigned to a workspace means deferring either to static wallpaper(s) or a
     random wallpaper if =wallpaper-static-wallpapers= is blank.
 
@@ -200,12 +200,12 @@
 
     Per-workspace wallpaper compatibility is ONLY guaranteed with EXWM, but I've
     left enough for this to be used with other window managers with good enough
-    configuration. Once I've got some experience using it with other WMs, I'll
+    configuration.  Once I've got some experience using it with other WMs, I'll
     leave a guide in the about section.
 
     In the meantime, =wallpaper-per-workspace-get= points to the function used to
-    get the current workspace. The function ~wallpaper-per-workspace-exwm-get~
-    is provided for use with EXWM. This is the default value for this variable.
+    get the current workspace.  The function ~wallpaper-per-workspace-exwm-get~
+    is provided for use with EXWM.  This is the default value for this variable.
     There is also a function for i3: ~wallpaper-per-workspace-i3-get~.
 
     #+begin_src emacs-lisp
@@ -260,7 +260,7 @@
 
     If you are cycling through your wallpapers automatically and want to make
     wallpaper cycling faster or slower, set =wallpaper-cycle-interval= to the
-    number of seconds you want to see each wallpaper. The default is a likely
+    number of seconds you want to see each wallpaper.  The default is a likely
     blazing fast fifteen seconds.
 
     #+begin_src emacs-lisp
@@ -305,7 +305,7 @@
 
 *** Using specific file extensions
 
-    When cycling, random wallpapers will be grabbed from a directory. This
+    When cycling, random wallpapers will be grabbed from a directory.  This
     regexp is used to pick which files within a directory are wallpapers.
 
     #+begin_src emacs-lisp
@@ -357,7 +357,7 @@
 *** Background color
 
     When =max= is the value for =wallpaper-scaling=, it leaves some portions of the
-    screen uncovered by the image. Setting =wallpaper-background= to a valid hex
+    screen uncovered by the image.  Setting =wallpaper-background= to a valid hex
     code or XColor will change the color shown behind the image.
 
     #+begin_src emacs-lisp
@@ -377,24 +377,24 @@
   #+end_src
 
   The function ~wallpaper-set-wallpaper~ can be used to set the wallpaper one
-  time. If ~wallpaper-per-workspace-mode~ is active, it will set the wallpaper
+  time.  If ~wallpaper-per-workspace-mode~ is active, it will set the wallpaper
   according to the current workspace and the wallpapers assigned to it in
   =wallpaper-per-workspace-alist=, otherwise it will try to use the wallpaper(s)
-  in =wallpaper-static-wallpapers=. If =wallpaper-static-wallpapers= is blank, it
+  in =wallpaper-static-wallpapers=.  If =wallpaper-static-wallpapers= is blank, it
   will randomly choose a PNG or JPG image found in =wallpaper-cycle-directory=.
   This function can be called interactively was well as in your configurations.
 
   If you are using this package with EXWM, I would highly recommend you add
   ~wallpaper-set-wallpaper~ to =exwm-randr-screen-change-hook= or add the command
-  to a function that is already in said hook. This way, every time you change
+  to a function that is already in said hook.  This way, every time you change
   monitors, the wallpaper is also automatically set and looks right.
 
   All the headers that follow relate specifically to how the function works,
   and are more oriented towards those looking to understand the rationale
   behind the function in order to +tell me how horribly the function is written+
-  help improve it. Feel free to skip on ahead if this doesn't interest you. The
-  short version of this is that a string is created with the ~feh~ command to be
-  executed, and then a process is started to execute the command.
+  help improve it.  Feel free to skip on ahead if this doesn't interest you.
+  The short version of this is that a string is created with the ~feh~ command to
+  be executed, and then a process is started to execute the command.
 
   #+begin_src emacs-lisp :noweb yes
     ;;;###autoload
@@ -497,8 +497,8 @@
 
 *** Getting the current workspace in EXWM
 
-    This is the default function for =wallpaper-per-workspace-get=. If EXWM is not
-    configured, it will throw an error when trying to grab the current
+    This is the default function for =wallpaper-per-workspace-get=.  If EXWM is
+    not configured, it will throw an error when trying to grab the current
     workspace.
 
     #+name: exwm
@@ -555,10 +555,10 @@
      <<num-monitors>>
    #+end_src
 
-   The overall process has two over-arching steps. First, a list is gathered of
-   all available wallpapers in =wallpaper-cycle-directory=. Then, the wallpapers
-   currently in use are removed from that list. During this step, the list of
-   wallpapers currently in use is also cleared. Then, for each monitor that can
+   The overall process has two over-arching steps.  First, a list is gathered of
+   all available wallpapers in =wallpaper-cycle-directory=.  Then, the wallpapers
+   currently in use are removed from that list.  During this step, the list of
+   wallpapers currently in use is also cleared.  Then, for each monitor that can
    be detected as active by ~xrandr~, a random wallpaper with the proper style
    argument is appended to the command string.
 
@@ -628,7 +628,7 @@
 
   Maybe, like me, even having a unique wallpaper on each monitor isn't enough.
   You may want to cycle through your wallpapers and just sit idly all day
-  watching the hundreds of wallpapers you have stored move by. In light of this
+  watching the hundreds of wallpapers you have stored move by.  In light of this
   need, I have a minor mode for that: ~wallpaper-cycle-mode~.
 
   #+begin_src emacs-lisp :noweb yes
@@ -661,8 +661,8 @@
     
   #+end_src
 
-  An idea someone gave me is setting a wallpaper per workspace. This is the
-  product of that work. Enabling ~wallpaper-per-workspace-mode~ will attempt to
+  An idea someone gave me is setting a wallpaper per workspace.  This is the
+  product of that work.  Enabling ~wallpaper-per-workspace-mode~ will attempt to
   hook the function ~wallpaper-set-wallpaper~ into =exwm-workspace-switch-hook=, or
   otherwise enable use of =wallpaper-per-workspace-alist= for determining what
   wallpaper(s) to use.
@@ -699,7 +699,7 @@
 
   These are specifically notes pertaining to testing this package, and are not
   really useful for anyone who isn't directly working on it or just learning how
-  to use the package. Documentation down here is relatively sparse, but made
+  to use the package.  Documentation down here is relatively sparse, but made
   visible to show what tests are performed for each commit.
 
   #+begin_src emacs-lisp
@@ -722,7 +722,7 @@
 
     When setting the wallpaper using =wallpaper-static-wallpaper-list=, there is
     no change in =wallpaper-current-wallpapers= between points when the wallpaper
-    is set. If there is a difference, there is a problem.
+    is set.  If there is a difference, there is a problem.
 
     #+begin_src emacs-lisp
       (defun wallpaper-test--static ()
@@ -743,7 +743,7 @@
 
     This is another simple one: when =wallpaper-cycle-mode= is active, different
     wallpapers should be in =wallpaper-current-wallpapers= after each passing of
-    =wallpaper-cycle-interval=. Because we can't expect there to be a proper X
+    =wallpaper-cycle-interval=.  Because we can't expect there to be a proper X
     session while testing, =wallpaper-cycle-single= must be non-nil.
 
     #+begin_src emacs-lisp
@@ -791,13 +791,13 @@
 
 *** Testing per-workspace wallpapers
 
-    This one was tricky to work with. The way to test it is really weird. I can
-    attest to it working on EXWM and vdesk. Past that you're on your own. This
-    is a number of different tests crammed into one. First, we make sure that
-    setting the wallpaper does in fact set the wallpaper(s) to the ones found in
-    ~wallpaper--per-workspace-wallpapers~ for the given workspace, and then we
-    make sure changing the workspace changes the assigned wallpapers
-    accordingly. If any extraneous wallpapers are in the variable
+    This one was tricky to work with.  The way to test it is really weird.  I
+    can attest to it working on EXWM and vdesk.  Past that you're on your own.
+    This is a number of different tests crammed into one.  First, we make sure
+    that setting the wallpaper does in fact set the wallpaper(s) to the ones
+    found in ~wallpaper--per-workspace-wallpapers~ for the given workspace, and
+    then we make sure changing the workspace changes the assigned wallpapers
+    accordingly.  If any extraneous wallpapers are in the variable
     =wallpaper-current-wallpapers=, the dummy workspace indicator is set to a
     different value and the test fails.
 
