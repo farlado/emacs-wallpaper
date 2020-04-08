@@ -646,9 +646,9 @@
 
     (defun wallpaper--toggle-cycle ()
       "Stop or start a `wallpaper-set-wallpaper' timer."
-      (cancel-function-timers 'wallpaper-set-wallpaper)
+      (cancel-function-timers #'wallpaper-set-wallpaper)
       (when wallpaper-cycle-mode
-        (run-with-timer 0 wallpaper-cycle-interval 'wallpaper-set-wallpaper)))
+        (run-with-timer 0 wallpaper-cycle-interval #'wallpaper-set-wallpaper)))
   #+end_src
 
   #+begin_src emacs-lisp :exports none :noweb yes

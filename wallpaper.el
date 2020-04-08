@@ -206,9 +206,9 @@ at the interval defined by `wallpaper-cycle-interval'.  See function
 
 (defun wallpaper--toggle-cycle ()
   "Stop or start a `wallpaper-set-wallpaper' timer."
-  (cancel-function-timers 'wallpaper-set-wallpaper)
+  (cancel-function-timers #'wallpaper-set-wallpaper)
   (when wallpaper-cycle-mode
-    (run-with-timer 0 wallpaper-cycle-interval 'wallpaper-set-wallpaper)))
+    (run-with-timer 0 wallpaper-cycle-interval #'wallpaper-set-wallpaper)))
 
 (defun wallpaper--random-wallpapers ()
   "Return a string of random wallpapers for each monitor.
