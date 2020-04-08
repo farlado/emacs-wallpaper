@@ -168,12 +168,14 @@ This function will either choose a random wallpaper from
                         wallpaper-static-wallpaper-list
                         (wallpaper--random-wallpapers)))
         (command (concat "feh --no-fehbg " (wallpaper--background))))
-    (setq wallpaper-current-wallpapers nil)
-    (dolist (wallpaper wallpapers)
-      (setq command (concat command (wallpaper--scaling) wallpaper " "))
-      (add-to-list 'wallpaper-current-wallpapers wallpaper))
-    (start-process-shell-command
-     "Wallpaper" nil command)))
+    (if (not wallpapers)
+        (message "No wallpapers selected.")
+      (setq wallpaper-current-wallpapers nil)
+      (dolist (wallpaper wallpapers)
+        (setq command (concat command (wallpaper--scaling) wallpaper " "))
+        (add-to-list 'wallpaper-current-wallpapers wallpaper))
+      (start-process-shell-command
+       "Wallpaper" nil command))))
 
 
 
