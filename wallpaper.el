@@ -109,7 +109,8 @@ one path is listed in `wallpaper-static-wallpapers'."
   :group 'wallpaper
   :type 'boolean)
 
-(defcustom wallpaper-cycle-directory (expand-file-name "~/.config/wallpapers")
+(defcustom wallpaper-cycle-directory (expand-file-name "wallpapers"
+						       (getenv "XDG_DATA_HOME"))
   "The directory in which to look for wallpapers."
   :tag "Wallpaper directory"
   :group 'wallpaper

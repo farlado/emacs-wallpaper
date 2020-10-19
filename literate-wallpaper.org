@@ -290,17 +290,18 @@
 
 *** Setting the wallpaper directory
 
-    By default, wallpapers are searched for in =~/.config/wallpapers= when
+    By default, wallpapers are searched for in =$XDG_DATA_HOME/wallpapers= when
     cycling wallpapers, but of course not everyone may want to store their
     wallpapers there, in which case you'll have to set the variable
     =wallpaper-cycle-directory= to where your wallpapers are stored.
 
     #+begin_src emacs-lisp
-      (defcustom wallpaper-cycle-directory (expand-file-name "~/.config/wallpapers")
-        "The directory in which to look for wallpapers."
-        :tag "Wallpaper directory"
-        :group 'wallpaper
-        :type 'string)
+      (defcustom wallpaper-cycle-directory (expand-file-name "wallpapers"
+							     (getenv "XDG_DATA_HOME"))
+	"The directory in which to look for wallpapers."
+	:tag "Wallpaper directory"
+	:group 'wallpaper
+	:type 'string)
     #+end_src
 
 *** Using specific file extensions
@@ -837,7 +838,7 @@
         (should (wallpaper-test--per-workspace)))
     #+end_src
 
-* End :noexport:
+* End
 
   #+begin_src emacs-lisp
     
