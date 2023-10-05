@@ -222,7 +222,7 @@ If `wallpaper-cycle-single' is non-nil, only one wallpaper is returned."
          (num-monitors (if wallpaper-cycle-single 1 (wallpaper--num-monitors)))
          (wallpapers nil))
     (dotimes (_ num-monitors)
-      (let ((wallpaper (nth (random num-available) available)))
+      (let ((wallpaper (nth (1- (random num-available)) available)))
         (cl-pushnew wallpaper wallpapers)
         (setq available (delq wallpaper available))))
     wallpapers))
