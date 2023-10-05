@@ -178,6 +178,38 @@ This function will either choose a random wallpaper from
         (add-to-list 'wallpaper-current-wallpapers wallpaper))
       (start-process-shell-command "Wallpaper" nil command))))
 
+;; I get the feeling the naming system should be more consistent.  We have
+;; `wallpaper--random-wallpapers' and `wallpaper--get-available'.  Either we
+;; match it with `wallpaper--available-wallpapers` or do
+;; `wallpaper--get-random`, no?  Also I'm not such a fan of the functionality of
+;; `wallpaper--random-wallpapers'.  By reading the name I would think it gives
+;; me a list of random wallpapers from the available wallpapers; but instead it
+;; gives me a random wallpaper for each monitor.  I feel that "monitor" should
+;; be in its name if it's a monitor specific function.
+
+;; Surprisingly, there's no interactive function to actually choose a wallpaper.
+;; I feel that this is a basic thing that should be here.
+
+;; Choose a wallpaper.  I don't completely understand how there are multiple
+;; wallpapers in `wallpaper-set-wallpapers'.  Aren't we just setting one?  The
+;; current monitor's?  In any case, I'll follow the idiom.
+(defun wallpaper-choose-wallpaper ()
+  "Choose a wallpaper for current monitor."
+  (interactive)
+  (let ((wallpapers (or (wallpaper--per-workspace-wallpapers)
+                        wallpaper-static-wallpaper-list
+                        (wallpaper--get-available)))
+        (wallpaper nil)
+        (command (concat "feh --no-fehbg " (wallpaper--background))))
+    (if (not wallpapers)
+        (message "No wallpapers to choose from.")
+      (setq wallpaper-current-wallpapers nil)
+      (setq wallpaper (completing-read "wallpaper: " wallpapers))
+      (alet (expand-file-name (shell-quote-argument (f-filename wallpaper)) (f-dirname wallpaper))
+        (setq command  (concat command (wallpaper--scaling) it)))
+      (add-to-list 'wallpaper-current-wallpapers wallpaper)
+      (start-process-shell-command "Wallpaper" nil command))))
+
 
 
 (defun wallpaper--scaling ()
