@@ -181,11 +181,14 @@ This function will either choose a random wallpaper from
 ;; I get the feeling the naming system should be more consistent.  We have
 ;; `wallpaper--random-wallpapers' and `wallpaper--get-available'.  Either we
 ;; match it with `wallpaper--available-wallpapers` or do
-;; `wallpaper--get-random`, no?  Also I'm not such a fan of the functionality of
-;; `wallpaper--random-wallpapers'.  By reading the name I would think it gives
-;; me a list of random wallpapers from the available wallpapers; but instead it
-;; gives me a random wallpaper for each monitor.  I feel that "monitor" should
-;; be in its name if it's a monitor specific function.
+;; `wallpaper--get-random`, no?
+
+;; Also I'm not such a fan of the functionality of
+;; `wallpaper--random-wallpapers' relative to its name.  By reading the name I
+;; would think it gives me a list of random wallpapers from the available
+;; wallpapers; but instead it gives me a random wallpaper for each monitor.  I
+;; feel that "monitor" should be in its name if it's a monitor specific
+;; function.
 
 ;; Surprisingly, there's no interactive function to actually choose a wallpaper.
 ;; I feel that this is a basic thing that should be here.
@@ -206,7 +209,7 @@ This function will either choose a random wallpaper from
       (setq wallpaper-current-wallpapers nil)
       (setq wallpaper (completing-read "wallpaper: " wallpapers))
       (alet (expand-file-name (shell-quote-argument (f-filename wallpaper)) (f-dirname wallpaper))
-        (setq command  (concat command (wallpaper--scaling) it)))
+        (setq command (concat command (wallpaper--scaling) it)))
       (add-to-list 'wallpaper-current-wallpapers wallpaper)
       (start-process-shell-command "Wallpaper" nil command))))
 
