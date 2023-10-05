@@ -181,11 +181,11 @@ This function will either choose a random wallpaper from
         (command (concat "feh --no-fehbg " (wallpaper--background))))
     (if (not wallpapers)
         (message "No wallpapers selected.")
-      (dolist (wallpaper (-difference wallpapers wallpaper-current-wallpapers))
+      (setq wallpaper-current-wallpapers nil)
+      (dolist (wallpaper wallpapers)
         (alet (expand-file-name (shell-quote-argument (f-filename wallpaper)) (f-dirname wallpaper))
           (setq command (concat command (wallpaper--scaling) it " ")))
         (add-to-list 'wallpaper-current-wallpapers wallpaper))
-      (setq wallpaper-current-wallpapers nil)
       (start-process-shell-command "Wallpaper" nil command))))
 
 ;; I get the feeling the naming system should be more consistent.  We have
