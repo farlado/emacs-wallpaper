@@ -158,7 +158,8 @@ This variable is set automatically.  Hand modification of its value
 may interfere with its proper behavior.")
 
 ;; In my opinion this should be named `wallpaper-set-random-wallpaper'.  Seeing
-;; this I would think that this is 
+;; this I would think that this is an interactive function to choose the
+;; wallpaper.
 ;;;###autoload
 (defun wallpaper-set-wallpaper ()
   "Set the wallpaper.
