@@ -157,9 +157,23 @@ The default option is fill."
 This variable is set automatically.  Hand modification of its value
 may interfere with its proper behavior.")
 
+;; In my opinion this should be named `wallpaper-set-random-wallpaper'.  Seeing
+;; this I would think that this is an interactive function to choose the
+;; wallpaper.  In fact, even reading the doc-string would make me thing that
+;; because it just says "set the wallpaper".  It should at least say "set random
+;; wallpaper".
+
+;; It's a matter of opinion whether by "set a random wallpaper" the user means
+;; set a random wallpaper that's not the current one.  To be honest that's what
+;; I mean when I say that.  I mean why would I even call this command if I'm
+;; O.K. with the same wallpaper?
+
+;; This monitor stuff is confusing me.  I think it's makes things more
+;; complicated than what its worth.  I don't use multiple monitors but if I did
+;; would I really want to change all their wallpapers at the same time?
 ;;;###autoload
 (defun wallpaper-set-wallpaper ()
-  "Set the wallpaper.
+  "Set the wallpaper to a random different wallpaper.
 
 This function will either choose a random wallpaper from
 `wallpaper-cycle-directory' or use the wallpapers listed in
@@ -173,10 +187,45 @@ This function will either choose a random wallpaper from
         (message "No wallpapers selected.")
       (setq wallpaper-current-wallpapers nil)
       (dolist (wallpaper wallpapers)
-        (setq command (concat command (wallpaper--scaling) wallpaper " "))
+        (alet (expand-file-name (shell-quote-argument (f-filename wallpaper)) (f-dirname wallpaper))
+          (setq command (concat command (wallpaper--scaling) it " ")))
         (add-to-list 'wallpaper-current-wallpapers wallpaper))
-      (start-process-shell-command
-       "Wallpaper" nil command))))
+      (start-process-shell-command "Wallpaper" nil command))))
+
+;; I get the feeling the naming system should be more consistent.  We have
+;; `wallpaper--random-wallpapers' and `wallpaper--get-available'.  Either we
+;; match it with `wallpaper--available-wallpapers` or do
+;; `wallpaper--get-random`, no?
+
+;; Also I'm not such a fan of the functionality of
+;; `wallpaper--random-wallpapers' relative to its name.  By reading the name I
+;; would think it gives me a list of random wallpapers from the available
+;; wallpapers; but instead it gives me a random wallpaper for each monitor.  I
+;; feel that "monitor" should be in its name if it's a monitor specific
+;; function.
+
+;; Surprisingly, there's no interactive function to actually choose a wallpaper.
+;; I feel that this is a basic thing that should be here.
+
+;; Choose a wallpaper.  I don't completely understand how there are multiple
+;; wallpapers in `wallpaper-set-wallpapers'.  Aren't we just setting one?  The
+;; current monitor's?  In any case, I'll follow the idiom.
+(defun wallpaper-choose-wallpaper ()
+  "Choose a wallpaper for current monitor."
+  (interactive)
+  (let ((wallpapers (or (wallpaper--per-workspace-wallpapers)
+                        wallpaper-static-wallpaper-list
+                        (wallpaper--get-available)))
+        (wallpaper nil)
+        (command (concat "feh --no-fehbg " (wallpaper--background))))
+    (if (not wallpapers)
+        (message "No wallpapers to choose from.")
+      (setq wallpaper-current-wallpapers nil)
+      (setq wallpaper (completing-read "wallpaper: " wallpapers))
+      (alet (expand-file-name (shell-quote-argument (f-filename wallpaper)) (f-dirname wallpaper))
+        (setq command (concat command (wallpaper--scaling) it)))
+      (add-to-list 'wallpaper-current-wallpapers wallpaper)
+      (start-process-shell-command "Wallpaper" nil command))))
 
 
 
@@ -222,7 +271,7 @@ If `wallpaper-cycle-single' is non-nil, only one wallpaper is returned."
          (num-monitors (if wallpaper-cycle-single 1 (wallpaper--num-monitors)))
          (wallpapers nil))
     (dotimes (_ num-monitors)
-      (let ((wallpaper (nth (random num-available) available)))
+      (let ((wallpaper (nth (1- (random num-available)) available)))
         (cl-pushnew wallpaper wallpapers)
         (setq available (delq wallpaper available))))
     wallpapers))
