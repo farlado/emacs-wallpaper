@@ -173,10 +173,10 @@ This function will either choose a random wallpaper from
         (message "No wallpapers selected.")
       (setq wallpaper-current-wallpapers nil)
       (dolist (wallpaper wallpapers)
-        (setq command (concat command (wallpaper--scaling) wallpaper " "))
+        (alet (expand-file-name (shell-quote-argument (f-filename wallpaper)) (f-dirname wallpaper))
+          (setq command (concat command (wallpaper--scaling) it " ")))
         (add-to-list 'wallpaper-current-wallpapers wallpaper))
-      (start-process-shell-command
-       "Wallpaper" nil command))))
+      (start-process-shell-command "Wallpaper" nil command))))
 
 
 
