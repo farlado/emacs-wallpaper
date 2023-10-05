@@ -182,7 +182,7 @@ This function will either choose a random wallpaper from
     (if (not wallpapers)
         (message "No wallpapers selected.")
       (setq wallpaper-current-wallpapers nil)
-      (dolist (wallpaper wallpapers)
+      (dolist (wallpaper (remove wallpapers))
         (alet (expand-file-name (shell-quote-argument (f-filename wallpaper)) (f-dirname wallpaper))
           (setq command (concat command (wallpaper--scaling) it " ")))
         (add-to-list 'wallpaper-current-wallpapers wallpaper))
