@@ -160,6 +160,11 @@ may interfere with its proper behavior.")
 ;; In my opinion this should be named `wallpaper-set-random-wallpaper'.  Seeing
 ;; this I would think that this is an interactive function to choose the
 ;; wallpaper.
+
+;; It's a matter of opinion whether by "set a random wallpaper" the user means
+;; set a random wallpaper that's not the current one.  To be honest that's what
+;; I mean when I say that.  I mean why would I even call this command if I'm
+;; O.K. with the same wallpaper?
 ;;;###autoload
 (defun wallpaper-set-wallpaper ()
   "Set the wallpaper.
