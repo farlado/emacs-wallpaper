@@ -167,6 +167,10 @@ may interfere with its proper behavior.")
 ;; set a random wallpaper that's not the current one.  To be honest that's what
 ;; I mean when I say that.  I mean why would I even call this command if I'm
 ;; O.K. with the same wallpaper?
+
+;; This monitor stuff is confusing me.  I think it's makes things more
+;; complicated than what its worth.  I don't use multiple monitors but if I did
+;; would I really want to change all their wallpapers at the same time?
 ;;;###autoload
 (defun wallpaper-set-wallpaper ()
   "Set the wallpaper to a random different wallpaper.
