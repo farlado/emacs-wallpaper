@@ -169,7 +169,7 @@ may interfere with its proper behavior.")
 ;; O.K. with the same wallpaper?
 ;;;###autoload
 (defun wallpaper-set-wallpaper ()
-  "Set the wallpaper.
+  "Set the wallpaper to a random different wallpaper.
 
 This function will either choose a random wallpaper from
 `wallpaper-cycle-directory' or use the wallpapers listed in
