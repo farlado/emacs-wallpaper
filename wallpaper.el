@@ -157,6 +157,8 @@ The default option is fill."
 This variable is set automatically.  Hand modification of its value
 may interfere with its proper behavior.")
 
+;; In my opinion this should be named `wallpaper-set-random-wallpaper'.  Seeing
+;; this I would think that this is 
 ;;;###autoload
 (defun wallpaper-set-wallpaper ()
   "Set the wallpaper.
